@@ -33,6 +33,7 @@
 -->
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
@@ -113,26 +114,34 @@
                      <children>
                         <HBox alignment="CENTER_RIGHT">
                            <children>
-                              <CheckBox fx:id="lockTable" contentDisplay="CENTER" mnemonicParsing="false" text="Lock Table">
+                              <CheckBox fx:id="lockTable" contentDisplay="CENTER" mnemonicParsing="false" onAction="#lockTable" text="Lock Table">
                                  <HBox.margin>
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                  </HBox.margin>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </CheckBox>
                               <Pane HBox.hgrow="ALWAYS" />
-                              <TextField fx:id="enterAssessment" prefHeight="25.0" prefWidth="190.0" promptText="Add Assesment (Quiz / Mid...)" />
-                              <Button fx:id="addAssessmentButton" mnemonicParsing="false" onAction="#addAssessment" text="Add Assesment">
-                                 <HBox.margin>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </HBox.margin></Button>
                            </children>
                         </HBox>
                         <HBox VBox.vgrow="ALWAYS">
                            <children>
                               <TableView fx:id="tableView" editable="true" tableMenuButtonVisible="true" HBox.hgrow="ALWAYS">
                                 <columns>
-                                    <TableColumn fx:id="snCol" prefWidth="50.0" text="SN" />
-                                  <TableColumn fx:id="idCol" prefWidth="164.0" text="ID" />
-                                  <TableColumn fx:id="nameCol" prefWidth="293.0" text="Name" />
+                                    <TableColumn fx:id="snCol" prefWidth="50.0" text="SN">
+                                       <graphic>
+                                          <Button fx:id="snRecalculate" mnemonicParsing="false" onAction="#recalculateSerialNumber" text="=">
+                                             <font>
+                                                <Font size="10.0" />
+                                             </font>
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
+                                          </Button>
+                                       </graphic></TableColumn>
+                                  <TableColumn fx:id="idCol" prefWidth="165.0" text="ID" />
+                                  <TableColumn fx:id="nameCol" prefWidth="290.0" text="Name" />
                                 </columns>
                               </TableView>
                            </children>
@@ -152,6 +161,9 @@
                            <VBox.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </VBox.margin>
+                           <cursor>
+                              <Cursor fx:constant="DEFAULT" />
+                           </cursor>
                         </TextArea>
                         <TextArea fx:id="enterName" accessibleRoleDescription="r" prefHeight="50.0" prefWidth="100.0" promptText="Enter Name">
                            <font>
@@ -160,13 +172,38 @@
                            <VBox.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </VBox.margin>
+                           <cursor>
+                              <Cursor fx:constant="DEFAULT" />
+                           </cursor>
                         </TextArea>
                         <Button fx:id="addIdButton" mnemonicParsing="false" onAction="#addIdName" text="Add Record" textFill="#388c23">
                            <font>
                               <Font name="System Bold" size="14.0" />
-                           </font></Button>
+                           </font>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor></Button>
                         <HBox alignment="CENTER" />
                         <HBox alignment="CENTER" />
+                        <HBox>
+                           <children>
+                              <TextField fx:id="enterAssessment" promptText="Assessment Name (Quiz / Mid...)" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="addAssessmentButton" mnemonicParsing="false" onAction="#addAssessment" prefWidth="65.0" text="Add" textFill="#388c23">
+                                 <HBox.margin>
+                                    <Insets left="5.0" />
+                                 </HBox.margin>
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Button>
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="15.0" />
+                           </VBox.margin>
+                        </HBox>
                         <Separator>
                            <effect>
                               <Reflection />

@@ -10,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
@@ -25,6 +26,11 @@ public class Controller implements Initializable{
 	//This has to be initialized from file first;
 	private ArrayList<String> assessmentNames = new ArrayList<>();
 	
+	private boolean tableIsLocked = false;
+	
+	
+	@FXML
+    private CheckBox lockTable;
 	@FXML
 	private TableView<Student> tableView;
 	
@@ -48,85 +54,112 @@ public class Controller implements Initializable{
 
 	
     
-	public void addAssessment(ActionEvent event) {
-		String assessmentName = enterAssessment.getText().trim();
-		
-		if(assessmentName.equals("")) return;
-		
-		
-		TableColumn<Student, Float> assessmentCol = new TableColumn<> (assessmentName);
-		assessmentNames.add(assessmentName);
-		
-		ObservableList<Student> students = tableView.getItems();
-		
-		int i;
-		for(i = 0; i < students.size(); i++) {
-			Student student = students.get(i);
-			student.setAssessmentNames(assessmentNames);
-			
-			ArrayList<Float> assessmentMarks = student.getAssessmentMarks();
-			assessmentMarks.add(0.0f);
-			student.setAssessmentMarks(assessmentMarks);
-			
-		}
-		
-		assessmentCol.setCellValueFactory(c -> {
-		    Student student = c.getValue();
-		    float mark = student.getMark(assessmentName);
-
-		    return new ReadOnlyObjectWrapper<>(Float.valueOf(mark));
-		});
-		
-		assessmentCol.setCellFactory(TextFieldTableCell.forTableColumn(new FloatStringConverter()));
-		assessmentCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Student,Float>>() {
-			@Override
-			public void handle(CellEditEvent<Student, Float> arg0) {
-				Student student = arg0.getRowValue();
-				float newMark = arg0.getNewValue();
-				
-				student.setMark(assessmentName, newMark);
-				System.out.println(student.getAssessmentMarks().get(0));
-				tableView.refresh();
-			}
-		});;
-		
-		tableView.getColumns().add(assessmentCol);
-		tableView.setItems(students);
-		enterAssessment.clear();
-	}
-	
 	public void addIdName(ActionEvent event) {
-		int i, j;
-		String[] idStrings = enterId.getText().split("\n");
-		String[] nameStrings = enterName.getText().split("\n");
-		int length = idStrings.length <= nameStrings.length ? idStrings.length : nameStrings.length;
+		if(!tableIsLocked) {
+			int i, j;
+			String[] idStrings = enterId.getText().split("\n");
+			String[] nameStrings = enterName.getText().split("\n");
+			int length = idStrings.length <= nameStrings.length ? idStrings.length : nameStrings.length;
 
-		Student[] student = new Student[length];
-		
-		for(i = 0; i < length; i++) {
-			student[i] = new Student();
-			student[i].setSn(tableView.getItems().size() + 1);
-			student[i].setId(Long.parseLong(idStrings[i].trim()));
-			student[i].setName(nameStrings[i].trim());
+			Student[] student = new Student[length];
 			
-			if(student[i].getName().equals("")) break;
-			
-			student[i].setAssessmentNames(assessmentNames);
-			
-			//setting default marks(0.0f) for each assessment in student class
-			ArrayList<Float> assessmentMarks = student[i].getAssessmentMarks();
-			for(j = 0; j < this.assessmentNames.size(); j++) {
-				assessmentMarks.add(0.0f);
-				student[i].setAssessmentMarks(assessmentMarks);
+			for(i = 0; i < length; i++) {
+				student[i] = new Student();
+				student[i].setSn(tableView.getItems().size() + 1);
+				student[i].setId(Long.parseLong(idStrings[i].trim()));
+				student[i].setName(nameStrings[i].trim());
+				
+				if(student[i].getName().equals("")) break;
+				
+				student[i].setAssessmentNames(assessmentNames);
+				
+				//setting default marks(0.0f) for each assessment in student class
+				ArrayList<Float> assessmentMarks = student[i].getAssessmentMarks();
+				for(j = 0; j < this.assessmentNames.size(); j++) {
+					assessmentMarks.add(0.0f);
+					student[i].setAssessmentMarks(assessmentMarks);
+				}
+				
+				ObservableList<Student> students = tableView.getItems();
+				students.add(student[i]);
+				tableView.setItems(students);
 			}
-			
-			ObservableList<Student> students = tableView.getItems();
-			students.add(student[i]);
-			tableView.setItems(students);
 		}
 		enterId.clear();
 		enterName.clear();
+		
 	}
+	
+	
+	public void addAssessment(ActionEvent event) {
+		if(!tableIsLocked) {
+			String assessmentName = enterAssessment.getText().trim();
+			
+			if(assessmentName.equals("")) return;
+			
+			
+			TableColumn<Student, Float> assessmentCol = new TableColumn<> (assessmentName);
+			assessmentNames.add(assessmentName);
+			
+			ObservableList<Student> students = tableView.getItems();
+			
+			int i;
+			for(i = 0; i < students.size(); i++) {
+				Student student = students.get(i);
+				student.setAssessmentNames(assessmentNames);
+				
+				ArrayList<Float> assessmentMarks = student.getAssessmentMarks();
+				assessmentMarks.add(0.0f);
+				student.setAssessmentMarks(assessmentMarks);
+				
+			}
+			
+			assessmentCol.setCellValueFactory(c -> {
+			    Student student = c.getValue();
+			    float mark = student.getMark(assessmentName);
+
+			    return new ReadOnlyObjectWrapper<>(Float.valueOf(mark));
+			});
+			
+			assessmentCol.setCellFactory(TextFieldTableCell.forTableColumn(new FloatStringConverter()));
+			assessmentCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Student,Float>>() {
+				@Override
+				public void handle(CellEditEvent<Student, Float> arg0) {
+					if(!tableIsLocked) {
+						Student student = arg0.getRowValue();
+						float newMark = arg0.getNewValue();
+						student.setMark(assessmentName, newMark);
+					}
+
+					tableView.refresh();
+				}
+			});;
+			
+			tableView.getColumns().add(assessmentCol);
+			tableView.setItems(students);
+		}
+		enterAssessment.clear();
+		
+	}
+	
+	
+	public void recalculateSerialNumber(ActionEvent event) {
+		if(!tableIsLocked) {
+			ObservableList<Student> students = tableView.getItems();
+			int i;
+			for(i = 0; i < students.size(); i++) {
+				students.get(i).setSn(i + 1);
+				tableView.setItems(students);
+				tableView.refresh();
+			}
+		}
+		
+	}
+	
+	public void lockTable(ActionEvent event) {
+		tableIsLocked = lockTable.isSelected() ? true : false;
+	}
+	
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -136,8 +169,10 @@ public class Controller implements Initializable{
 			
 			@Override
 			public void handle(CellEditEvent<Student, Integer> arg0) {
-				Student student = arg0.getRowValue();
-				student.setSn(arg0.getNewValue());
+				if(!tableIsLocked) {
+					Student student = arg0.getRowValue();
+					student.setSn(arg0.getNewValue());
+				}
 				tableView.refresh();
 			}
 		});;
@@ -148,8 +183,10 @@ public class Controller implements Initializable{
 			
 			@Override
 			public void handle(CellEditEvent<Student, Long> arg0) {
-				Student student = arg0.getRowValue();
-				student.setId(arg0.getNewValue());
+				if(!tableIsLocked) {
+					Student student = arg0.getRowValue();
+					student.setId(arg0.getNewValue());
+				}
 				tableView.refresh();
 			}
 		});;
@@ -160,8 +197,11 @@ public class Controller implements Initializable{
 			
 			@Override
 			public void handle(CellEditEvent<Student, String> arg0) {
-				Student student = arg0.getRowValue();
-				student.setName(arg0.getNewValue());
+				if(tableIsLocked) {
+					Student student = arg0.getRowValue();
+					student.setName(arg0.getNewValue());
+				}
+				tableView.refresh();
 			}
 		});;
 	}
