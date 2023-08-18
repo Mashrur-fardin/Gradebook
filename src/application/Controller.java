@@ -197,7 +197,7 @@ public class Controller implements Initializable{
 			
 			@Override
 			public void handle(CellEditEvent<Student, String> arg0) {
-				if(tableIsLocked) {
+				if(!tableIsLocked) {
 					Student student = arg0.getRowValue();
 					student.setName(arg0.getNewValue());
 				}
