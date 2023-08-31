@@ -10,7 +10,11 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
@@ -52,7 +56,13 @@ public class Controller implements Initializable{
     @FXML
     private TextField enterAssessment;
 
-	
+    @FXML
+    private TextField idToRemove;
+    
+    @FXML
+    private ChoiceBox<String> assessmentChoiceBox;
+    
+    
     
 	public void addIdName(ActionEvent event) {
 		if(!tableIsLocked) {
@@ -140,6 +150,10 @@ public class Controller implements Initializable{
 		}
 		enterAssessment.clear();
 		
+//		This is for removing assessments later
+		assessmentChoiceBox.getItems().removeAll(assessmentNames);
+		assessmentChoiceBox.getItems().addAll(assessmentNames); 
+		
 	}
 	
 	
@@ -158,6 +172,49 @@ public class Controller implements Initializable{
 	
 	public void lockTable(ActionEvent event) {
 		tableIsLocked = lockTable.isSelected() ? true : false;
+	}
+	
+	public void removeStudent(ActionEvent event) {
+		if(!tableIsLocked) {
+			ObservableList<Student> students = tableView.getItems();
+			int i;
+			for(i = 0; i < students.size(); i++) {
+				if(students.get(i).getId() == Long.parseLong(idToRemove.getText())) {
+					Alert alert = new Alert(AlertType.CONFIRMATION);
+					alert.setTitle("Remove Student");
+					alert.setHeaderText("You are about remove ID-" + idToRemove.getText() + " from the table.");
+					alert.setContentText("This cannot be undone. Press cancel if you are not sure.");
+					if(alert.showAndWait().get() == ButtonType.OK) {						
+						students.remove(i);
+					}
+					break;
+				}
+			}
+			idToRemove.clear();
+		}
+	}
+	
+	public void removeAssessment(ActionEvent event) {
+		if(!tableIsLocked) {
+			ObservableList<TableColumn<Student, ?>> tableColumns = tableView.getColumns();
+			String columnToRemove = assessmentChoiceBox.getValue();
+			int i;
+			for(i = 0; i < tableColumns.size(); i++) {
+				if(columnToRemove.equals(tableColumns.get(i).getText())) {
+					tableView.getColumns().remove(i);
+					break;
+				}
+			}
+			for(i = 0; i < this.assessmentNames.size(); i++) {
+				if(assessmentNames.get(i).equals(columnToRemove)) {
+					assessmentNames.remove(i);
+					break;
+				}
+			}
+			
+			assessmentChoiceBox.getItems().removeAll(assessmentNames);
+			assessmentChoiceBox.getItems().addAll(assessmentNames); 
+		}
 	}
 	
 
@@ -204,5 +261,6 @@ public class Controller implements Initializable{
 				tableView.refresh();
 			}
 		});;
+		
 	}
 }
