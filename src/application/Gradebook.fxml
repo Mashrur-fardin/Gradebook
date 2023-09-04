@@ -42,14 +42,12 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.effect.Reflection?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -102,11 +100,7 @@
       <items>
             <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="227.0">
               <content>
-                <AnchorPane>
-                     <children>
-                        <Label layoutX="25.0" layoutY="22.0" text="kjh" />
-                     </children>
-                  </AnchorPane>
+                <AnchorPane />
               </content>
             </ScrollPane>
         <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="551.0" prefWidth="266.0">
@@ -151,107 +145,159 @@
                   </VBox>
                </content>
         </ScrollPane>
-            <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="551.0" prefWidth="390.0">
-               <content>
-                  <VBox alignment="TOP_CENTER">
-                     <children>
-                        <TextArea fx:id="enterId" prefHeight="50.0" prefWidth="178.0" promptText="Enter ID">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </VBox.margin>
-                           <cursor>
-                              <Cursor fx:constant="DEFAULT" />
-                           </cursor>
-                        </TextArea>
-                        <TextArea fx:id="enterName" accessibleRoleDescription="r" prefHeight="50.0" prefWidth="100.0" promptText="Enter Name">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </VBox.margin>
-                           <cursor>
-                              <Cursor fx:constant="DEFAULT" />
-                           </cursor>
-                        </TextArea>
-                        <Button fx:id="addIdButton" focusTraversable="false" mnemonicParsing="false" onAction="#addIdName" text="Add Record" textFill="#388c23">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor></Button>
-                        <HBox alignment="CENTER" />
-                        <HBox alignment="CENTER" />
-                        <HBox>
+            <VBox alignment="TOP_CENTER">
+               <children>
+                  <SplitPane dividerPositions="0.35, 0.75" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+                    <items>
+                        <VBox alignment="TOP_CENTER" minHeight="20.0">
                            <children>
-                              <TextField fx:id="enterAssessment" promptText="Assessment Name (Quiz / Mid...)" HBox.hgrow="ALWAYS" />
-                              <Button fx:id="addAssessmentButton" focusTraversable="false" mnemonicParsing="false" onAction="#addAssessment" prefWidth="65.0" text="Add" textFill="#388c23">
-                                 <HBox.margin>
-                                    <Insets left="5.0" />
-                                 </HBox.margin>
+                              <Label text="Enter student ID and name:">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <TextArea fx:id="enterId" prefHeight="50.0" prefWidth="178.0" promptText="Enter ID">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" />
+                                 </VBox.margin>
+                                 <cursor>
+                                    <Cursor fx:constant="DEFAULT" />
+                                 </cursor>
+                              </TextArea>
+                              <TextArea fx:id="enterName" accessibleRoleDescription="r" prefHeight="50.0" prefWidth="100.0" promptText="Enter Name">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
+                                 <cursor>
+                                    <Cursor fx:constant="DEFAULT" />
+                                 </cursor>
+                              </TextArea>
+                              <Button fx:id="addIdButton" focusTraversable="false" mnemonicParsing="false" onAction="#addIdName" text="Add Record" textFill="#388c23">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
                                  </font>
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
                               </Button>
                            </children>
-                           <VBox.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="15.0" />
-                           </VBox.margin>
-                        </HBox>
-                        <Separator prefHeight="60.0">
-                           <effect>
-                              <Reflection />
-                           </effect>
-                           <VBox.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </VBox.margin>
-                        </Separator>
-                        <HBox alignment="CENTER">
+                        </VBox>
+                        <VBox alignment="TOP_CENTER" minHeight="20.0">
                            <children>
-                              <TextField fx:id="idToRemove" prefWidth="150.0" promptText="Enter ID" HBox.hgrow="ALWAYS">
-                                 <HBox.margin>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </HBox.margin>
-                              </TextField>
-                              <Button fx:id="removeStudentButton" mnemonicParsing="false" onAction="#removeStudent" prefHeight="25.0" prefWidth="70.0" text="Remove" textFill="#8a2c22">
+                              <Label text="Add assessment:">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>
-                                 <HBox.margin>
-                                    <Insets bottom="5.0" right="5.0" top="5.0" />
-                                 </HBox.margin>
-                              </Button>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </Label>
+                              <HBox>
+                                 <children>
+                                    <TextField fx:id="enterAssessment" promptText="Assessment Name (Quiz / Mid...)" HBox.hgrow="ALWAYS" />
+                                    <Button fx:id="addAssessmentButton" focusTraversable="false" mnemonicParsing="false" onAction="#addAssessment" prefWidth="65.0" text="Add" textFill="#388c23">
+                                       <HBox.margin>
+                                          <Insets left="5.0" />
+                                       </HBox.margin>
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Button>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <ScrollPane fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
+                                 <content>
+                                    <VBox alignment="CENTER">
+                                       <children>
+                                          <TableView editable="true" focusTraversable="false" prefHeight="150.0" prefWidth="150.0" VBox.vgrow="ALWAYS">
+                                            <columns>
+                                              <TableColumn prefWidth="50.0" sortable="false" text="Name" />
+                                              <TableColumn prefWidth="50.0" sortable="false" text="Full Marks" />
+                                                <TableColumn prefWidth="50.0" sortable="false" text="Weight (%)" />
+                                            </columns>
+                                             <columnResizePolicy>
+                                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                             </columnResizePolicy>
+                                          </TableView>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </ScrollPane>
                            </children>
-                        </HBox>
-                        <HBox alignment="CENTER">
+                        </VBox>
+                        <VBox alignment="TOP_CENTER" minHeight="20.0">
                            <children>
-                              <Pane HBox.hgrow="ALWAYS" />
-                              <ChoiceBox fx:id="assessmentChoiceBox" prefWidth="150.0" HBox.hgrow="ALWAYS">
-                                 <HBox.margin>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </HBox.margin>
-                              </ChoiceBox>
-                              <Button fx:id="removeAssessmentButton" mnemonicParsing="false" onAction="#removeAssessment" prefHeight="25.0" prefWidth="70.0" text="Remove" textFill="#8a2c22">
+                              <Label text="Remove student by ID:">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>
-                                 <HBox.margin>
-                                    <Insets bottom="5.0" right="5.0" top="5.0" />
-                                 </HBox.margin>
-                              </Button>
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <HBox alignment="CENTER">
+                                 <children>
+                                    <TextField fx:id="idToRemove" prefWidth="150.0" promptText="Enter ID" HBox.hgrow="ALWAYS">
+                                       <HBox.margin>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" />
+                                       </HBox.margin>
+                                    </TextField>
+                                    <Button fx:id="removeStudentButton" mnemonicParsing="false" onAction="#removeStudent" prefHeight="25.0" prefWidth="70.0" text="Remove" textFill="#8a2c22">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets bottom="5.0" right="5.0" top="5.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <Label text="Remove assessment:">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <HBox alignment="CENTER">
+                                 <children>
+                                    <ChoiceBox fx:id="assessmentChoiceBox" prefWidth="150.0" HBox.hgrow="ALWAYS">
+                                       <HBox.margin>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </HBox.margin>
+                                    </ChoiceBox>
+                                    <Button fx:id="removeAssessmentButton" mnemonicParsing="false" onAction="#removeAssessment" prefHeight="25.0" prefWidth="70.0" text="Remove" textFill="#8a2c22">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets bottom="5.0" right="5.0" top="5.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                 </children>
+                              </HBox>
                            </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-               </content>
-            </ScrollPane>
+                        </VBox>
+                    </items>
+                  </SplitPane>
+               </children>
+            </VBox>
       </items>
     </SplitPane>
     <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">

@@ -196,24 +196,30 @@ public class Controller implements Initializable{
 	
 	public void removeAssessment(ActionEvent event) {
 		if(!tableIsLocked) {
+			Boolean confirm = false;
 			ObservableList<TableColumn<Student, ?>> tableColumns = tableView.getColumns();
 			String columnToRemove = assessmentChoiceBox.getValue();
 			int i;
 			for(i = 0; i < tableColumns.size(); i++) {
-				if(columnToRemove.equals(tableColumns.get(i).getText())) {
-					tableView.getColumns().remove(i);
+				if(columnToRemove != null && columnToRemove.equals(tableColumns.get(i).getText())) {
+					Alert alert = new Alert(AlertType.CONFIRMATION);
+					alert.setTitle("Remove Assessment");
+					alert.setHeaderText("You are about remove " + tableColumns.get(i).getText() + " from the table.");
+					alert.setContentText("This cannot be undone. Press cancel if you are not sure.");
+					if(alert.showAndWait().get() == ButtonType.OK) {						
+						tableView.getColumns().remove(i);
+						confirm = true;
+					}
 					break;
 				}
 			}
 			for(i = 0; i < this.assessmentNames.size(); i++) {
-				if(assessmentNames.get(i).equals(columnToRemove)) {
+				if(assessmentNames.get(i).equals(columnToRemove) && confirm) {
 					assessmentNames.remove(i);
+					assessmentChoiceBox.getItems().remove(i);
 					break;
 				}
 			}
-			
-			assessmentChoiceBox.getItems().removeAll(assessmentNames);
-			assessmentChoiceBox.getItems().addAll(assessmentNames); 
 		}
 	}
 	
