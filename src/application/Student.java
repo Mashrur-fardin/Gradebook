@@ -8,7 +8,7 @@ public class Student {
 	private String name;
 //	private String[] assesment = new String[50];
 //	private String[] assesmentName = new String[50];
-	private ArrayList<String> assessmentNames = new ArrayList<>();
+	private static ArrayList<String> assessmentNames = new ArrayList<>();
 	private ArrayList<Float> assessmentMarks = new ArrayList<>(); 
 	
 	public Student() {

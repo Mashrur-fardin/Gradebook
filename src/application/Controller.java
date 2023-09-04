@@ -29,14 +29,28 @@ import javafx.util.converter.LongStringConverter;
 public class Controller implements Initializable{
 	//This has to be initialized from file first;
 	private ArrayList<String> assessmentNames = new ArrayList<>();
+	private ArrayList<Assessment> assessmentsArrayList = new ArrayList<>(); //this is for the mini right table
 	
 	private boolean tableIsLocked = false;
 	
 	
 	@FXML
     private CheckBox lockTable;
+	
 	@FXML
 	private TableView<Student> tableView;
+	
+    @FXML
+    private TableView<Assessment> assessmentMarksTable;
+    
+    @FXML
+    private TableColumn<Assessment, Double> assessmentFullMarkCol;
+
+    @FXML
+    private TableColumn<Assessment, String> assessmentNameCol;
+
+    @FXML
+    private TableColumn<Assessment, Double> assessmentWeightCol;
 	
 	@FXML
     private TableColumn<Student, Integer> snCol;
@@ -111,6 +125,12 @@ public class Controller implements Initializable{
 			TableColumn<Student, Float> assessmentCol = new TableColumn<> (assessmentName);
 			assessmentNames.add(assessmentName);
 			
+			Assessment assessment = new Assessment();
+			assessment.setAssessmentName(assessmentName);
+			assessment.setAssessmentFullMark(0.0);
+			assessment.setAssessmentWeight(0.0);
+			assessmentsArrayList.add(assessment);
+			
 			ObservableList<Student> students = tableView.getItems();
 			
 			int i;
@@ -147,13 +167,27 @@ public class Controller implements Initializable{
 			
 			tableView.getColumns().add(assessmentCol);
 			tableView.setItems(students);
+			
+//			This is for the right most mini assessment table.
+			ObservableList<Assessment> assessmentsObservableList = assessmentMarksTable.getItems();
+			for(i = 0; i < assessmentsArrayList.size(); i++) {
+				try {
+//					set to index i
+					assessmentsObservableList.set(i, assessmentsArrayList.get(i));
+				} catch (Exception e) {
+//					if index i doesn't exist then add it
+					assessmentsObservableList.add(assessmentsArrayList.get(i));
+				}
+				
+			}
+			assessmentMarksTable.setItems(assessmentsObservableList);
+
+			
+//		This is for removing assessments later
+			assessmentChoiceBox.getItems().removeAll(assessmentNames);
+			assessmentChoiceBox.getItems().addAll(assessmentNames); 
 		}
 		enterAssessment.clear();
-		
-//		This is for removing assessments later
-		assessmentChoiceBox.getItems().removeAll(assessmentNames);
-		assessmentChoiceBox.getItems().addAll(assessmentNames); 
-		
 	}
 	
 	
@@ -198,6 +232,7 @@ public class Controller implements Initializable{
 		if(!tableIsLocked) {
 			Boolean confirm = false;
 			ObservableList<TableColumn<Student, ?>> tableColumns = tableView.getColumns();
+			ObservableList<Assessment> assessmentsToRemove = assessmentMarksTable.getItems(); //some assessments will be removed from this list
 			String columnToRemove = assessmentChoiceBox.getValue();
 			int i;
 			for(i = 0; i < tableColumns.size(); i++) {
@@ -213,13 +248,26 @@ public class Controller implements Initializable{
 					break;
 				}
 			}
+			
+//			removing from the mini table
+			for(i = 0; i < assessmentsToRemove.size(); i++) {
+				if(assessmentsToRemove.get(i).getAssessmentName().equals(columnToRemove)) {
+					assessmentsToRemove.remove(i);
+					assessmentMarksTable.refresh();
+					break;
+				}
+			}
+			
 			for(i = 0; i < this.assessmentNames.size(); i++) {
 				if(assessmentNames.get(i).equals(columnToRemove) && confirm) {
 					assessmentNames.remove(i);
+					assessmentsArrayList.remove(i);
 					assessmentChoiceBox.getItems().remove(i);
 					break;
 				}
 			}
+			
+			
 		}
 	}
 	
@@ -268,5 +316,9 @@ public class Controller implements Initializable{
 			}
 		});;
 		
+		
+		assessmentNameCol.setCellValueFactory(new PropertyValueFactory<Assessment, String>("assessmentName"));
+		assessmentFullMarkCol.setCellValueFactory(new PropertyValueFactory<Assessment, Double>("assessmentFullMark"));
+		assessmentWeightCol.setCellValueFactory(new PropertyValueFactory<Assessment, Double>("assessmentWeight"));
 	}
 }
