@@ -22,6 +22,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.FloatStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import javafx.util.converter.LongStringConverter;
@@ -318,7 +319,75 @@ public class Controller implements Initializable{
 		
 		
 		assessmentNameCol.setCellValueFactory(new PropertyValueFactory<Assessment, String>("assessmentName"));
+		assessmentNameCol.setCellFactory(TextFieldTableCell.forTableColumn());
+		assessmentNameCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Assessment,String>>() {
+			
+			@Override
+			public void handle(CellEditEvent<Assessment, String> arg0) {
+				if(!tableIsLocked) {
+					Assessment a = arg0.getRowValue();
+					String newValueString = arg0.getNewValue();
+					
+					//now editing other related stuff
+					 int i;
+					 for(i = 0; i < assessmentNames.size(); i++) {
+						 if(assessmentNames.get(i).equals(a.getAssessmentName())) {
+							 assessmentNames.set(i, newValueString);
+							 assessmentsArrayList.set(i, a);
+							 break;
+						 }
+					 }
+					 
+//					 changing name in main table
+					 for(i = 0; i < tableView.getColumns().size(); i++) {
+						 if(tableView.getColumns().get(i).getText().equals(a.getAssessmentName())) {
+							 tableView.getColumns().get(i).setText(newValueString);
+							 tableView.refresh();
+							 break;
+						 }
+					 }
+					 
+//					 changing name in student class
+					 try {
+						 tableView.getItems().get(0).setAssessmentNames(assessmentNames); //used get(0) because assessmentNames is static						
+					 } catch (Exception e) {
+						//If table is empty do nothing
+					 }
+
+					
+					a.setAssessmentName(newValueString);
+				}
+				assessmentMarksTable.refresh();
+			}
+		});;
+		
+		
 		assessmentFullMarkCol.setCellValueFactory(new PropertyValueFactory<Assessment, Double>("assessmentFullMark"));
+		assessmentFullMarkCol.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+		assessmentFullMarkCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Assessment, Double>>() {
+			
+			@Override
+			public void handle(CellEditEvent<Assessment, Double> arg0) {
+				if(!tableIsLocked) {
+					Assessment a = arg0.getRowValue();
+					a.setAssessmentFullMark(arg0.getNewValue());
+				}
+				assessmentMarksTable.refresh();
+			}
+		});;
+		
 		assessmentWeightCol.setCellValueFactory(new PropertyValueFactory<Assessment, Double>("assessmentWeight"));
+		assessmentWeightCol.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+		assessmentWeightCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Assessment, Double>>() {
+			
+			@Override
+			public void handle(CellEditEvent<Assessment, Double> arg0) {
+				if(!tableIsLocked) {
+					Assessment a = arg0.getRowValue();
+					a.setAssessmentWeight(arg0.getNewValue());
+				}
+				assessmentMarksTable.refresh();
+			}
+		});;
 	}
 }
