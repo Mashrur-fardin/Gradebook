@@ -231,7 +231,6 @@ public class Controller implements Initializable{
 	
 	public void removeAssessment(ActionEvent event) {
 		if(!tableIsLocked) {
-			Boolean confirm = false;
 			ObservableList<TableColumn<Student, ?>> tableColumns = tableView.getColumns();
 			ObservableList<Assessment> assessmentsToRemove = assessmentMarksTable.getItems(); //some assessments will be removed from this list
 			String columnToRemove = assessmentChoiceBox.getValue();
@@ -244,31 +243,29 @@ public class Controller implements Initializable{
 					alert.setContentText("This cannot be undone. Press cancel if you are not sure.");
 					if(alert.showAndWait().get() == ButtonType.OK) {						
 						tableView.getColumns().remove(i);
-						confirm = true;
+						
+//						removing from the mini table
+						for(i = 0; i < assessmentsToRemove.size(); i++) {
+							if(assessmentsToRemove.get(i).getAssessmentName().equals(columnToRemove)) {
+								assessmentsToRemove.remove(i);
+								assessmentMarksTable.refresh();
+								break;
+							}
+						}
+						
+						for(i = 0; i < this.assessmentNames.size(); i++) {
+							if(assessmentNames.get(i).equals(columnToRemove)) {
+								assessmentNames.remove(i);
+								assessmentsArrayList.remove(i);
+								assessmentChoiceBox.getItems().remove(i);
+								break;
+							}
+						}
+						
 					}
 					break;
 				}
 			}
-			
-//			removing from the mini table
-			for(i = 0; i < assessmentsToRemove.size(); i++) {
-				if(assessmentsToRemove.get(i).getAssessmentName().equals(columnToRemove)) {
-					assessmentsToRemove.remove(i);
-					assessmentMarksTable.refresh();
-					break;
-				}
-			}
-			
-			for(i = 0; i < this.assessmentNames.size(); i++) {
-				if(assessmentNames.get(i).equals(columnToRemove) && confirm) {
-					assessmentNames.remove(i);
-					assessmentsArrayList.remove(i);
-					assessmentChoiceBox.getItems().remove(i);
-					break;
-				}
-			}
-			
-			
 		}
 	}
 	
@@ -334,9 +331,11 @@ public class Controller implements Initializable{
 						 if(assessmentNames.get(i).equals(a.getAssessmentName())) {
 							 assessmentNames.set(i, newValueString);
 							 assessmentsArrayList.set(i, a);
+							 assessmentChoiceBox.getItems().set(i, newValueString);
 							 break;
 						 }
 					 }
+					 
 					 
 //					 changing name in main table
 					 for(i = 0; i < tableView.getColumns().size(); i++) {

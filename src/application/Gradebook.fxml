@@ -257,13 +257,16 @@
                                           <Insets bottom="5.0" left="5.0" right="5.0" />
                                        </HBox.margin>
                                     </TextField>
-                                    <Button fx:id="removeStudentButton" mnemonicParsing="false" onAction="#removeStudent" prefHeight="25.0" prefWidth="70.0" text="Remove" textFill="#8a2c22">
+                                    <Button fx:id="removeStudentButton" focusTraversable="false" mnemonicParsing="false" onAction="#removeStudent" prefHeight="25.0" prefWidth="70.0" text="Remove" textFill="#8a2c22">
                                        <font>
                                           <Font name="System Bold" size="12.0" />
                                        </font>
                                        <HBox.margin>
                                           <Insets bottom="5.0" right="5.0" top="5.0" />
                                        </HBox.margin>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
                                     </Button>
                                  </children>
                               </HBox>
@@ -282,13 +285,16 @@
                                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                        </HBox.margin>
                                     </ChoiceBox>
-                                    <Button fx:id="removeAssessmentButton" mnemonicParsing="false" onAction="#removeAssessment" prefHeight="25.0" prefWidth="70.0" text="Remove" textFill="#8a2c22">
+                                    <Button fx:id="removeAssessmentButton" focusTraversable="false" mnemonicParsing="false" onAction="#removeAssessment" prefHeight="25.0" prefWidth="70.0" text="Remove" textFill="#8a2c22">
                                        <font>
                                           <Font name="System Bold" size="12.0" />
                                        </font>
                                        <HBox.margin>
                                           <Insets bottom="5.0" right="5.0" top="5.0" />
                                        </HBox.margin>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
                                     </Button>
                                  </children>
                               </HBox>
