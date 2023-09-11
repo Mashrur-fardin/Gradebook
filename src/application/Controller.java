@@ -58,7 +58,7 @@ public class Controller implements Initializable{
     private TableColumn<Student, Integer> snCol;
 	
 	@FXML
-    private TableColumn<Student, Long> idCol;
+    private TableColumn<Student, String> idCol;
 	
 	@FXML
     private TableColumn<Student, String> nameCol;
@@ -113,7 +113,11 @@ public class Controller implements Initializable{
 			for(i = 0; i < length; i++) {
 				student[i] = new Student();
 				student[i].setSn(tableView.getItems().size() + 1);
-				student[i].setId(Long.parseLong(idStrings[i].trim()));
+				try {					
+					student[i].setId(idStrings[i].trim());
+				} catch (Exception e) {
+					break;
+				}
 				student[i].setName(nameStrings[i].trim());
 				
 				if(student[i].getName().equals("")) break;
@@ -121,9 +125,9 @@ public class Controller implements Initializable{
 				student[i].setAssessmentNames(assessmentNames);
 				
 				//setting default marks(0.0f) for each assessment in student class
-				ArrayList<Float> assessmentMarks = student[i].getAssessmentMarks();
+				ArrayList<String> assessmentMarks = student[i].getAssessmentMarks();
 				for(j = 0; j < this.assessmentNames.size(); j++) {
-					assessmentMarks.add(0.0f);
+					assessmentMarks.add("");
 					student[i].setAssessmentMarks(assessmentMarks);
 				}
 				
@@ -145,7 +149,7 @@ public class Controller implements Initializable{
 			if(assessmentName.equals("")) return;
 			
 			
-			TableColumn<Student, Float> assessmentCol = new TableColumn<> (assessmentName);
+			TableColumn<Student, String> assessmentCol = new TableColumn<> (assessmentName);
 			assessmentNames.add(assessmentName);
 			
 			Assessment assessment = new Assessment();
@@ -161,26 +165,26 @@ public class Controller implements Initializable{
 				Student student = students.get(i);
 				student.setAssessmentNames(assessmentNames);
 				
-				ArrayList<Float> assessmentMarks = student.getAssessmentMarks();
-				assessmentMarks.add(0.0f);
+				ArrayList<String> assessmentMarks = student.getAssessmentMarks();
+				assessmentMarks.add("");
 				student.setAssessmentMarks(assessmentMarks);
 				
 			}
 			
 			assessmentCol.setCellValueFactory(c -> {
 			    Student student = c.getValue();
-			    float mark = student.getMark(assessmentName);
+			    String mark = student.getMark(assessmentName);
 
-			    return new ReadOnlyObjectWrapper<>(Float.valueOf(mark));
+			    return new ReadOnlyObjectWrapper<>(mark);
 			});
 			
-			assessmentCol.setCellFactory(TextFieldTableCell.forTableColumn(new FloatStringConverter()));
-			assessmentCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Student,Float>>() {
+			assessmentCol.setCellFactory(TextFieldTableCell.forTableColumn());
+			assessmentCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Student,String>>() {
 				@Override
-				public void handle(CellEditEvent<Student, Float> arg0) {
+				public void handle(CellEditEvent<Student, String> arg0) {
 					if(!tableIsLocked) {
 						Student student = arg0.getRowValue();
-						float newMark = arg0.getNewValue();
+						String newMark = arg0.getNewValue();
 						student.setMark(assessmentName, newMark);
 					}
 
@@ -239,7 +243,7 @@ public class Controller implements Initializable{
 			ObservableList<Student> students = tableView.getItems();
 			int i;
 			for(i = 0; i < students.size(); i++) {
-				if(students.get(i).getId() == Long.parseLong(idToRemove.getText())) {
+				if(students.get(i).getId().equals(idToRemove.getText())) {
 					Alert alert = new Alert(AlertType.CONFIRMATION);
 					alert.setTitle("Remove Student");
 					alert.setHeaderText("You are about remove ID-" + idToRemove.getText() + " from the table.");
@@ -322,9 +326,13 @@ public class Controller implements Initializable{
 			ObservableList<Student> students = tableView.getItems();
 			int i;
 			for(i = 0; i < students.size(); i++) {
-				float mark = students.get(i).getMark(colName);
-				mark += markToAdd;
-				students.get(i).setMark(colName, mark);
+				try {
+					float mark = Float.parseFloat(students.get(i).getMark(colName));
+					mark += markToAdd;
+					students.get(i).setMark(colName, mark+"");
+				} catch (Exception e) {
+					// do nothing
+				}
 			}
 			tableView.setItems(students);
 			tableView.refresh();
@@ -349,15 +357,15 @@ public class Controller implements Initializable{
 			}
 		});;
 		
-		idCol.setCellValueFactory(new PropertyValueFactory<Student, Long>("id"));
-		idCol.setCellFactory(TextFieldTableCell.forTableColumn(new LongStringConverter()));
-		idCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Student,Long>>() {
+		idCol.setCellValueFactory(new PropertyValueFactory<Student, String>("id"));
+		idCol.setCellFactory(TextFieldTableCell.forTableColumn());
+		idCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Student,String>>() {
 			
 			@Override
-			public void handle(CellEditEvent<Student, Long> arg0) {
+			public void handle(CellEditEvent<Student, String> arg0) {
 				if(!tableIsLocked) {
 					Student student = arg0.getRowValue();
-					student.setId(arg0.getNewValue());
+					student.setName(arg0.getNewValue());
 				}
 				tableView.refresh();
 			}

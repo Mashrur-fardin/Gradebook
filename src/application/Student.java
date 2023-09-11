@@ -4,18 +4,16 @@ import java.util.ArrayList;
 
 public class Student {
 	private int sn = -1;
-	private long id;
+	private String id;
 	private String name;
-//	private String[] assesment = new String[50];
-//	private String[] assesmentName = new String[50];
 	private static ArrayList<String> assessmentNames = new ArrayList<>();
-	private ArrayList<Float> assessmentMarks = new ArrayList<>(); 
+	private ArrayList<String> assessmentMarks = new ArrayList<>(); 
 	
 	public Student() {
-		this.id = 0;
+		this.id = "";
 		this.name = "";
 	}
-	public Student(int id, String name) {
+	public Student(String id, String name) {
 		this.id = id;
 		this.name = name;
 	}
@@ -26,10 +24,10 @@ public class Student {
 	public void setSn(int sn) {
 		this.sn = sn;
 	}
-	public long getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	public String getName() {
@@ -45,24 +43,24 @@ public class Student {
 	public void setAssessmentNames(ArrayList<String> assessmentNames) {
 		this.assessmentNames = assessmentNames;
 	}
-	public ArrayList<Float> getAssessmentMarks() {
+	public ArrayList<String> getAssessmentMarks() {
 		return this.assessmentMarks;
 	}
-	public void setAssessmentMarks(ArrayList<Float> assessmentMarks) {
+	public void setAssessmentMarks(ArrayList<String> assessmentMarks) {
 		this.assessmentMarks = assessmentMarks;
 	}
 	
-	public float getMark(String assessmentName) {
+	public String getMark(String assessmentName) {
 		int i;
 		for(i = 0; i < this.assessmentNames.size(); i++) {
 			if(this.assessmentNames.get(i).equals(assessmentName)) {
 				return assessmentMarks.get(i);
 			}
 		}
-		return 0.0f;
+		return "0.0";
 	}
 	
-	public void setMark(String assessmentName, float mark) {
+	public void setMark(String assessmentName, String mark) {
 		int i;
 		for(i = 0; i < assessmentNames.size(); i++) {
 			if(assessmentNames.get(i).equals(assessmentName)) {

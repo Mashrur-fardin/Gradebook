@@ -98,13 +98,13 @@
         </Menu>
       </menus>
     </MenuBar>
-    <SplitPane dividerPositions="0.3184855233853007, 0.7873051224944321" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+    <SplitPane dividerPositions="0.14, 0.7873" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
             <VBox prefHeight="200.0" prefWidth="100.0">
                <children>
                   <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" VBox.vgrow="ALWAYS">
                      <items>
-                        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+                        <VBox alignment="TOP_CENTER" minHeight="20.0" prefWidth="100.0">
                            <children>
                               <Label text="Calculate marks:">
                                  <font>
@@ -221,7 +221,7 @@
                            <children>
                               <TableView fx:id="tableView" editable="true" prefWidth="396.0" tableMenuButtonVisible="true" HBox.hgrow="ALWAYS">
                                 <columns>
-                                    <TableColumn fx:id="snCol" prefWidth="50.0" text="SN">
+                                    <TableColumn fx:id="snCol" prefWidth="64.0" text="SN">
                                        <graphic>
                                           <Button fx:id="snRecalculate" focusTraversable="false" mnemonicParsing="false" onAction="#recalculateSerialNumber" text="=">
                                              <font>
@@ -232,8 +232,8 @@
                                              </cursor>
                                           </Button>
                                        </graphic></TableColumn>
-                                  <TableColumn fx:id="idCol" prefWidth="165.0" text="ID" />
-                                  <TableColumn fx:id="nameCol" prefWidth="290.0" text="Name" />
+                                  <TableColumn fx:id="idCol" prefWidth="135.0" text="ID" />
+                                  <TableColumn fx:id="nameCol" prefWidth="225.0" text="Name" />
                                 </columns>
                               </TableView>
                            </children>
