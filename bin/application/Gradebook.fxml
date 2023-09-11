@@ -41,14 +41,16 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
@@ -96,13 +98,108 @@
         </Menu>
       </menus>
     </MenuBar>
-    <SplitPane dividerPositions="0.08463251670378619, 0.7873051224944321" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+    <SplitPane dividerPositions="0.3184855233853007, 0.7873051224944321" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
-            <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="227.0">
-              <content>
-                <AnchorPane />
-              </content>
-            </ScrollPane>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" VBox.vgrow="ALWAYS">
+                     <items>
+                        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+                           <children>
+                              <Label text="Calculate marks:">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <VBox prefWidth="100.0">
+                                 <children>
+                                    <RadioButton fx:id="averageRadioButton" mnemonicParsing="false" onAction="#markCalculationProcess" text="Average">
+                                       <padding>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="radioButtonsForMarkCalculation" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton fx:id="bestRadioButton" mnemonicParsing="false" onAction="#markCalculationProcess" text="Best" toggleGroup="$radioButtonsForMarkCalculation">
+                                       <VBox.margin>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </VBox.margin>
+                                    </RadioButton>
+                                    <HBox>
+                                       <children>
+                                          <RadioButton fx:id="best_n_RadioButton" mnemonicParsing="false" onAction="#markCalculationProcess" text="Best" toggleGroup="$radioButtonsForMarkCalculation">
+                                             <HBox.margin>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </HBox.margin>
+                                          </RadioButton>
+                                          <TextField fx:id="best_n_textField" disable="true" prefHeight="25.0" prefWidth="33.0">
+                                             <HBox.margin>
+                                                <Insets left="5.0" />
+                                             </HBox.margin>
+                                          </TextField>
+                                       </children>
+                                    </HBox>
+                                    <HBox>
+                                       <children>
+                                          <Label text="Of:">
+                                             <font>
+                                                <Font name="System Bold" size="12.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets left="5.0" right="5.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <Separator prefWidth="200.0" />
+                                    <HBox>
+                                       <children>
+                                          <RadioButton fx:id="bonusRadioButton" mnemonicParsing="false" onAction="#markCalculationProcess" text="Bonus marks to all:" toggleGroup="$radioButtonsForMarkCalculation">
+                                             <HBox.margin>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </HBox.margin>
+                                          </RadioButton>
+                                          <TextField fx:id="bonusTextField" disable="true" prefHeight="25.0" prefWidth="45.0">
+                                             <HBox.margin>
+                                                <Insets left="5.0" />
+                                             </HBox.margin>
+                                          </TextField>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                              <HBox alignment="CENTER">
+                                 <children>
+                                    <Label text="Add to: ">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <ChoiceBox fx:id="choiceBoxForMarkCalculation" prefWidth="150.0" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="20.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <Button fx:id="calculateMark" mnemonicParsing="false" onAction="#calculateMark" prefWidth="75.0" text="OK" textFill="#388c23">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="15.0" />
+                                 </VBox.margin>
+                              </Button>
+                           </children>
+                        </VBox>
+                        <VBox prefHeight="200.0" prefWidth="100.0" />
+                     </items>
+                  </SplitPane>
+               </children>
+            </VBox>
         <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="551.0" prefWidth="266.0">
                <content>
                   <VBox alignment="TOP_RIGHT">
@@ -122,7 +219,7 @@
                         </HBox>
                         <HBox VBox.vgrow="ALWAYS">
                            <children>
-                              <TableView fx:id="tableView" editable="true" tableMenuButtonVisible="true" HBox.hgrow="ALWAYS">
+                              <TableView fx:id="tableView" editable="true" prefWidth="396.0" tableMenuButtonVisible="true" HBox.hgrow="ALWAYS">
                                 <columns>
                                     <TableColumn fx:id="snCol" prefWidth="50.0" text="SN">
                                        <graphic>
@@ -193,7 +290,7 @@
                         </VBox>
                         <VBox alignment="TOP_CENTER" minHeight="20.0">
                            <children>
-                              <Label text="Add assessment:">
+                              <Label text="Add assessment column:">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>
@@ -257,7 +354,7 @@
                                           <Insets bottom="5.0" left="5.0" right="5.0" />
                                        </HBox.margin>
                                     </TextField>
-                                    <Button fx:id="removeStudentButton" focusTraversable="false" mnemonicParsing="false" onAction="#removeStudent" prefHeight="25.0" prefWidth="70.0" text="Remove" textFill="#8a2c22">
+                                    <Button fx:id="removeStudentButton" focusTraversable="false" mnemonicParsing="false" onAction="#removeStudent" prefHeight="25.0" prefWidth="70.0" text="Remove" textFill="#8a2b22">
                                        <font>
                                           <Font name="System Bold" size="12.0" />
                                        </font>

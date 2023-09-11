@@ -15,6 +15,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
@@ -76,6 +77,27 @@ public class Controller implements Initializable{
     
     @FXML
     private ChoiceBox<String> assessmentChoiceBox;
+    
+    @FXML
+    private RadioButton averageRadioButton;
+
+    @FXML
+    private RadioButton bestRadioButton;
+
+    @FXML
+    private RadioButton best_n_RadioButton;
+
+    @FXML
+    private RadioButton bonusRadioButton;
+    
+    @FXML
+    private TextField bonusTextField;
+
+    @FXML
+    private TextField best_n_textField;
+    
+    @FXML
+    private ChoiceBox<String> choiceBoxForMarkCalculation;
     
     
     
@@ -187,6 +209,9 @@ public class Controller implements Initializable{
 //		This is for removing assessments later
 			assessmentChoiceBox.getItems().removeAll(assessmentNames);
 			assessmentChoiceBox.getItems().addAll(assessmentNames); 
+			
+			choiceBoxForMarkCalculation.getItems().removeAll(assessmentNames);
+			choiceBoxForMarkCalculation.getItems().addAll(assessmentNames); 
 		}
 		enterAssessment.clear();
 	}
@@ -258,6 +283,7 @@ public class Controller implements Initializable{
 								assessmentNames.remove(i);
 								assessmentsArrayList.remove(i);
 								assessmentChoiceBox.getItems().remove(i);
+								choiceBoxForMarkCalculation.getItems().remove(i);
 								break;
 							}
 						}
@@ -266,6 +292,43 @@ public class Controller implements Initializable{
 					break;
 				}
 			}
+		}
+	}
+	
+	
+	public void markCalculationProcess(ActionEvent event) {
+		if(averageRadioButton.isSelected()) {
+			best_n_textField.setDisable(true);
+			bonusTextField.setDisable(true);
+			
+		} else if(bestRadioButton.isSelected()) {
+			best_n_textField.setDisable(true);
+			bonusTextField.setDisable(true);
+			
+		} else if(best_n_RadioButton.isSelected()) {
+			best_n_textField.setDisable(false);
+			bonusTextField.setDisable(true);
+			
+		} else if(bonusRadioButton.isSelected()) {
+			best_n_textField.setDisable(true);
+			bonusTextField.setDisable(false);
+		} 
+	}
+	
+	public void calculateMark(ActionEvent event) {
+		if(bonusRadioButton.isSelected() && !bonusTextField.getText().equals("")) {
+			String colName = choiceBoxForMarkCalculation.getValue();
+			float markToAdd = Float.parseFloat(bonusTextField.getText());
+			ObservableList<Student> students = tableView.getItems();
+			int i;
+			for(i = 0; i < students.size(); i++) {
+				float mark = students.get(i).getMark(colName);
+				mark += markToAdd;
+				students.get(i).setMark(colName, mark);
+			}
+			tableView.setItems(students);
+			tableView.refresh();
+			bonusTextField.clear();
 		}
 	}
 	
@@ -332,6 +395,7 @@ public class Controller implements Initializable{
 							 assessmentNames.set(i, newValueString);
 							 assessmentsArrayList.set(i, a);
 							 assessmentChoiceBox.getItems().set(i, newValueString);
+							 choiceBoxForMarkCalculation.getItems().set(i, newValueString);
 							 break;
 						 }
 					 }
