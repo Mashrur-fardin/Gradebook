@@ -327,7 +327,12 @@ public class Controller implements Initializable{
 			int i;
 			for(i = 0; i < students.size(); i++) {
 				try {
-					float mark = Float.parseFloat(students.get(i).getMark(colName));
+					float mark;
+					if(students.get(i).getMark(colName).equals("")) {
+						mark = 0.0f;
+					} else {						
+						mark = Float.parseFloat(students.get(i).getMark(colName));
+					}
 					mark += markToAdd;
 					students.get(i).setMark(colName, mark+"");
 				} catch (Exception e) {
@@ -337,6 +342,7 @@ public class Controller implements Initializable{
 			tableView.setItems(students);
 			tableView.refresh();
 			bonusTextField.clear();
+			bonusRadioButton.setSelected(false);
 		}
 	}
 	
