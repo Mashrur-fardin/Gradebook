@@ -38,6 +38,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
@@ -98,15 +99,15 @@
         </Menu>
       </menus>
     </MenuBar>
-    <SplitPane dividerPositions="0.14, 0.7873" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+    <SplitPane dividerPositions="0.23496659242761692, 0.7873051224944321" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
             <VBox prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" VBox.vgrow="ALWAYS">
+                  <SplitPane dividerPositions="0.5336976320582878" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" VBox.vgrow="ALWAYS">
                      <items>
-                        <VBox alignment="TOP_CENTER" minHeight="20.0" prefWidth="100.0">
+                        <VBox alignment="TOP_CENTER" minHeight="20.0" prefWidth="206.0">
                            <children>
-                              <Label text="Calculate marks:">
+                              <Label text="Calculate Marks:">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>
@@ -150,12 +151,20 @@
                                                 <Font name="System Bold" size="12.0" />
                                              </font>
                                           </Label>
+                                          <ScrollPane fitToHeight="true" fitToWidth="true" focusTraversable="false" prefHeight="150.0" HBox.hgrow="ALWAYS">
+                                             <content>
+                                                <VBox prefHeight="200.0" prefWidth="100.0">
+                                                   <children>
+                                                      <ListView fx:id="listViewForMarkCalculation" />
+                                                   </children>
+                                                </VBox>
+                                             </content>
+                                          </ScrollPane>
                                        </children>
                                        <VBox.margin>
                                           <Insets left="5.0" right="5.0" />
                                        </VBox.margin>
                                     </HBox>
-                                    <Separator prefWidth="200.0" />
                                     <HBox>
                                        <children>
                                           <RadioButton fx:id="bonusRadioButton" mnemonicParsing="false" onAction="#markCalculationProcess" text="Bonus marks to all:" toggleGroup="$radioButtonsForMarkCalculation">
@@ -172,9 +181,28 @@
                                     </HBox>
                                  </children>
                               </VBox>
+                              <Separator prefWidth="200.0">
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" top="10.0" />
+                                 </VBox.margin>
+                              </Separator>
+                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <RadioButton fx:id="addRadioButton" mnemonicParsing="false" text="Add">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="addOrReplace" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton fx:id="replaceRadioButton" mnemonicParsing="false" selected="true" text="Replace" toggleGroup="$addOrReplace">
+                                       <HBox.margin>
+                                          <Insets left="10.0" />
+                                       </HBox.margin>
+                                    </RadioButton>
+                                 </children>
+                              </HBox>
                               <HBox alignment="CENTER">
                                  <children>
-                                    <Label text="Add to: ">
+                                    <Label text="Save to: ">
                                        <font>
                                           <Font name="System Bold" size="12.0" />
                                        </font>
@@ -182,7 +210,7 @@
                                     <ChoiceBox fx:id="choiceBoxForMarkCalculation" prefWidth="150.0" />
                                  </children>
                                  <VBox.margin>
-                                    <Insets top="20.0" />
+                                    <Insets />
                                  </VBox.margin>
                               </HBox>
                               <Button fx:id="calculateMark" mnemonicParsing="false" onAction="#calculateMark" prefWidth="75.0" text="OK" textFill="#388c23">
@@ -248,7 +276,7 @@
                     <items>
                         <VBox alignment="TOP_CENTER" minHeight="20.0">
                            <children>
-                              <Label text="Enter student ID and name:">
+                              <Label text="Enter Student ID and Name:">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>
@@ -290,7 +318,7 @@
                         </VBox>
                         <VBox alignment="TOP_CENTER" minHeight="20.0">
                            <children>
-                              <Label text="Add assessment column:">
+                              <Label text="Add Assessment Column:">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>
@@ -339,7 +367,7 @@
                         </VBox>
                         <VBox alignment="TOP_CENTER" minHeight="20.0">
                            <children>
-                              <Label text="Remove student by ID:">
+                              <Label text="Remove Student by ID:">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>
@@ -367,7 +395,7 @@
                                     </Button>
                                  </children>
                               </HBox>
-                              <Label text="Remove assessment:">
+                              <Label text="Remove Assessment:">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>

@@ -15,6 +15,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
@@ -32,6 +33,8 @@ public class Controller implements Initializable{
 	//This has to be initialized from file first;
 	private ArrayList<String> assessmentNames = new ArrayList<>();
 	private ArrayList<Assessment> assessmentsArrayList = new ArrayList<>(); //this is for the mini right table
+	
+	private ArrayList<CheckBox> checkBoxes = new ArrayList<>(); //this is for mark calculation on the left side
 	
 	private boolean tableIsLocked = false;
 	
@@ -99,43 +102,54 @@ public class Controller implements Initializable{
     @FXML
     private ChoiceBox<String> choiceBoxForMarkCalculation;
     
+    @FXML
+    private ListView<CheckBox> listViewForMarkCalculation;
+    
+    @FXML
+    private RadioButton replaceRadioButton;
+    
+    @FXML
+    private RadioButton addRadioButton;
+    
+    
     
     
 	public void addIdName(ActionEvent event) {
-		if(!tableIsLocked) {
-			int i, j;
-			String[] idStrings = enterId.getText().split("\n");
-			String[] nameStrings = enterName.getText().split("\n");
-			int length = idStrings.length <= nameStrings.length ? idStrings.length : nameStrings.length;
+		if(tableIsLocked) return;
+		
+		int i, j;
+		String[] idStrings = enterId.getText().split("\n");
+		String[] nameStrings = enterName.getText().split("\n");
+		int length = idStrings.length <= nameStrings.length ? idStrings.length : nameStrings.length;
 
-			Student[] student = new Student[length];
-			
-			for(i = 0; i < length; i++) {
-				student[i] = new Student();
-				student[i].setSn(tableView.getItems().size() + 1);
-				try {					
-					student[i].setId(idStrings[i].trim());
-				} catch (Exception e) {
-					break;
-				}
-				student[i].setName(nameStrings[i].trim());
-				
-				if(student[i].getName().equals("")) break;
-				
-				student[i].setAssessmentNames(assessmentNames);
-				
-				//setting default marks(0.0f) for each assessment in student class
-				ArrayList<String> assessmentMarks = student[i].getAssessmentMarks();
-				for(j = 0; j < this.assessmentNames.size(); j++) {
-					assessmentMarks.add("");
-					student[i].setAssessmentMarks(assessmentMarks);
-				}
-				
-				ObservableList<Student> students = tableView.getItems();
-				students.add(student[i]);
-				tableView.setItems(students);
+		Student[] student = new Student[length];
+		
+		for(i = 0; i < length; i++) {
+			student[i] = new Student();
+			student[i].setSn(tableView.getItems().size() + 1);
+			try {					
+				student[i].setId(idStrings[i].trim());
+			} catch (Exception e) {
+				break;
 			}
+			student[i].setName(nameStrings[i].trim());
+			
+			if(student[i].getName().equals("")) break;
+			
+			student[i].setAssessmentNames(assessmentNames);
+			
+			//setting default marks(0.0f) for each assessment in student class
+			ArrayList<String> assessmentMarks = student[i].getAssessmentMarks();
+			for(j = 0; j < this.assessmentNames.size(); j++) {
+				assessmentMarks.add("");
+				student[i].setAssessmentMarks(assessmentMarks);
+			}
+			
+			ObservableList<Student> students = tableView.getItems();
+			students.add(student[i]);
+			tableView.setItems(students);
 		}
+		
 		enterId.clear();
 		enterName.clear();
 		
@@ -143,81 +157,90 @@ public class Controller implements Initializable{
 	
 	
 	public void addAssessment(ActionEvent event) {
-		if(!tableIsLocked) {
-			String assessmentName = enterAssessment.getText().trim();
+		if(tableIsLocked) return;
+		
+		String assessmentName = enterAssessment.getText().trim();
+		
+		if(assessmentName.equals("")) return;
+		
+		
+		TableColumn<Student, String> assessmentCol = new TableColumn<> (assessmentName);
+		assessmentNames.add(assessmentName);
+		
+		Assessment assessment = new Assessment();
+		assessment.setAssessmentName(assessmentName);
+		assessment.setAssessmentFullMark(0.0);
+		assessment.setAssessmentWeight(0.0);
+		assessmentsArrayList.add(assessment);
+		
+		ObservableList<Student> students = tableView.getItems();
+		
+		int i;
+		for(i = 0; i < students.size(); i++) {
+			Student student = students.get(i);
+			student.setAssessmentNames(assessmentNames);
 			
-			if(assessmentName.equals("")) return;
+			ArrayList<String> assessmentMarks = student.getAssessmentMarks();
+			assessmentMarks.add("");
+			student.setAssessmentMarks(assessmentMarks);
 			
-			
-			TableColumn<Student, String> assessmentCol = new TableColumn<> (assessmentName);
-			assessmentNames.add(assessmentName);
-			
-			Assessment assessment = new Assessment();
-			assessment.setAssessmentName(assessmentName);
-			assessment.setAssessmentFullMark(0.0);
-			assessment.setAssessmentWeight(0.0);
-			assessmentsArrayList.add(assessment);
-			
-			ObservableList<Student> students = tableView.getItems();
-			
-			int i;
-			for(i = 0; i < students.size(); i++) {
-				Student student = students.get(i);
-				student.setAssessmentNames(assessmentNames);
-				
-				ArrayList<String> assessmentMarks = student.getAssessmentMarks();
-				assessmentMarks.add("");
-				student.setAssessmentMarks(assessmentMarks);
-				
-			}
-			
-			assessmentCol.setCellValueFactory(c -> {
-			    Student student = c.getValue();
-			    String mark = student.getMark(assessmentName);
-
-			    return new ReadOnlyObjectWrapper<>(mark);
-			});
-			
-			assessmentCol.setCellFactory(TextFieldTableCell.forTableColumn());
-			assessmentCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Student,String>>() {
-				@Override
-				public void handle(CellEditEvent<Student, String> arg0) {
-					if(!tableIsLocked) {
-						Student student = arg0.getRowValue();
-						String newMark = arg0.getNewValue();
-						student.setMark(assessmentName, newMark);
-					}
-
-					tableView.refresh();
-				}
-			});;
-			
-			tableView.getColumns().add(assessmentCol);
-			tableView.setItems(students);
-			
-//			This is for the right most mini assessment table.
-			ObservableList<Assessment> assessmentsObservableList = assessmentMarksTable.getItems();
-			for(i = 0; i < assessmentsArrayList.size(); i++) {
-				try {
-//					set to index i
-					assessmentsObservableList.set(i, assessmentsArrayList.get(i));
-				} catch (Exception e) {
-//					if index i doesn't exist then add it
-					assessmentsObservableList.add(assessmentsArrayList.get(i));
-				}
-				
-			}
-			assessmentMarksTable.setItems(assessmentsObservableList);
-
-			
-//		This is for removing assessments later
-			assessmentChoiceBox.getItems().removeAll(assessmentNames);
-			assessmentChoiceBox.getItems().addAll(assessmentNames); 
-			
-			choiceBoxForMarkCalculation.getItems().removeAll(assessmentNames);
-			choiceBoxForMarkCalculation.getItems().addAll(assessmentNames); 
 		}
+		
+		assessmentCol.setCellValueFactory(c -> {
+		    Student student = c.getValue();
+		    String mark = student.getMark(assessmentName);
+
+		    return new ReadOnlyObjectWrapper<>(mark);
+		});
+		
+		assessmentCol.setCellFactory(TextFieldTableCell.forTableColumn());
+		assessmentCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Student,String>>() {
+			@Override
+			public void handle(CellEditEvent<Student, String> arg0) {
+				if(!tableIsLocked) {
+					Student student = arg0.getRowValue();
+					String newMark = arg0.getNewValue();
+					student.setMark(assessmentName, newMark);
+				}
+
+				tableView.refresh();
+			}
+		});;
+		
+		tableView.getColumns().add(assessmentCol);
+		tableView.setItems(students);
+		
+//			This is for the right most mini assessment table.
+		ObservableList<Assessment> assessmentsObservableList = assessmentMarksTable.getItems();
+		for(i = 0; i < assessmentsArrayList.size(); i++) {
+			try {
+//					set to index i
+				assessmentsObservableList.set(i, assessmentsArrayList.get(i));
+			} catch (Exception e) {
+//					if index i doesn't exist then add it
+				assessmentsObservableList.add(assessmentsArrayList.get(i));
+			}
+			
+		}
+		assessmentMarksTable.setItems(assessmentsObservableList);
+
+		
+//		This is for removing assessments later
+		assessmentChoiceBox.getItems().removeAll(assessmentNames);
+		assessmentChoiceBox.getItems().addAll(assessmentNames); 
+		
+		choiceBoxForMarkCalculation.getItems().removeAll(assessmentNames);
+		choiceBoxForMarkCalculation.getItems().addAll(assessmentNames); 
+
+		//Now adding choice boxes on the left side
+		CheckBox assessmentCheckBox = new CheckBox();
+		assessmentCheckBox.setText(assessmentName);
+		listViewForMarkCalculation.getItems().add(assessmentCheckBox);
+		
 		enterAssessment.clear();
+		
+		
+		
 	}
 	
 	
@@ -239,64 +262,66 @@ public class Controller implements Initializable{
 	}
 	
 	public void removeStudent(ActionEvent event) {
-		if(!tableIsLocked) {
-			ObservableList<Student> students = tableView.getItems();
-			int i;
-			for(i = 0; i < students.size(); i++) {
-				if(students.get(i).getId().equals(idToRemove.getText())) {
-					Alert alert = new Alert(AlertType.CONFIRMATION);
-					alert.setTitle("Remove Student");
-					alert.setHeaderText("You are about remove ID-" + idToRemove.getText() + " from the table.");
-					alert.setContentText("This cannot be undone. Press cancel if you are not sure.");
-					if(alert.showAndWait().get() == ButtonType.OK) {						
-						students.remove(i);
-					}
-					break;
+		if(tableIsLocked) return;
+		
+		ObservableList<Student> students = tableView.getItems();
+		int i;
+		for(i = 0; i < students.size(); i++) {
+			if(students.get(i).getId().equals(idToRemove.getText())) {
+				Alert alert = new Alert(AlertType.CONFIRMATION);
+				alert.setTitle("Remove Student");
+				alert.setHeaderText("You are about remove ID-" + idToRemove.getText() + " from the table.");
+				alert.setContentText("This cannot be undone. Press cancel if you are not sure.");
+				if(alert.showAndWait().get() == ButtonType.OK) {						
+					students.remove(i);
 				}
+				break;
 			}
-			idToRemove.clear();
 		}
+		idToRemove.clear();
+		
 	}
 	
 	public void removeAssessment(ActionEvent event) {
-		if(!tableIsLocked) {
-			ObservableList<TableColumn<Student, ?>> tableColumns = tableView.getColumns();
-			ObservableList<Assessment> assessmentsToRemove = assessmentMarksTable.getItems(); //some assessments will be removed from this list
-			String columnToRemove = assessmentChoiceBox.getValue();
-			int i;
-			for(i = 0; i < tableColumns.size(); i++) {
-				if(columnToRemove != null && columnToRemove.equals(tableColumns.get(i).getText())) {
-					Alert alert = new Alert(AlertType.CONFIRMATION);
-					alert.setTitle("Remove Assessment");
-					alert.setHeaderText("You are about remove " + tableColumns.get(i).getText() + " from the table.");
-					alert.setContentText("This cannot be undone. Press cancel if you are not sure.");
-					if(alert.showAndWait().get() == ButtonType.OK) {						
-						tableView.getColumns().remove(i);
-						
+		if(tableIsLocked) return;
+		
+		ObservableList<TableColumn<Student, ?>> tableColumns = tableView.getColumns();
+		ObservableList<Assessment> assessmentsToRemove = assessmentMarksTable.getItems(); //some assessments will be removed from this list
+		String columnToRemove = assessmentChoiceBox.getValue();
+		int i;
+		for(i = 0; i < tableColumns.size(); i++) {
+			if(columnToRemove != null && columnToRemove.equals(tableColumns.get(i).getText())) {
+				Alert alert = new Alert(AlertType.CONFIRMATION);
+				alert.setTitle("Remove Assessment");
+				alert.setHeaderText("You are about remove " + tableColumns.get(i).getText() + " from the table.");
+				alert.setContentText("This cannot be undone. Press cancel if you are not sure.");
+				if(alert.showAndWait().get() == ButtonType.OK) {						
+					tableView.getColumns().remove(i);
+					
 //						removing from the mini table
-						for(i = 0; i < assessmentsToRemove.size(); i++) {
-							if(assessmentsToRemove.get(i).getAssessmentName().equals(columnToRemove)) {
-								assessmentsToRemove.remove(i);
-								assessmentMarksTable.refresh();
-								break;
-							}
+					for(i = 0; i < assessmentsToRemove.size(); i++) {
+						if(assessmentsToRemove.get(i).getAssessmentName().equals(columnToRemove)) {
+							assessmentsToRemove.remove(i);
+							assessmentMarksTable.refresh();
+							break;
 						}
-						
-						for(i = 0; i < this.assessmentNames.size(); i++) {
-							if(assessmentNames.get(i).equals(columnToRemove)) {
-								assessmentNames.remove(i);
-								assessmentsArrayList.remove(i);
-								assessmentChoiceBox.getItems().remove(i);
-								choiceBoxForMarkCalculation.getItems().remove(i);
-								break;
-							}
-						}
-						
 					}
-					break;
+					
+					for(i = 0; i < this.assessmentNames.size(); i++) {
+						if(assessmentNames.get(i).equals(columnToRemove)) {
+							assessmentNames.remove(i);
+							assessmentsArrayList.remove(i);
+							assessmentChoiceBox.getItems().remove(i);
+							choiceBoxForMarkCalculation.getItems().remove(i);
+							break;
+						}
+					}
+					
 				}
+				break;
 			}
 		}
+		
 	}
 	
 	
@@ -320,21 +345,70 @@ public class Controller implements Initializable{
 	}
 	
 	public void calculateMark(ActionEvent event) {
-		if(bonusRadioButton.isSelected() && !bonusTextField.getText().equals("")) {
+		if(tableIsLocked) return;
+		
+		if(averageRadioButton.isSelected()) {
+			int i, j;
+			ObservableList<CheckBox> checkBoxes = listViewForMarkCalculation.getItems();
+			ArrayList<String> selectedAssessments = new ArrayList<>();
+			double[] calculatedAvgMarks = new double[tableView.getItems().size()];
+			ObservableList<Student> students = tableView.getItems();
+			String colName = choiceBoxForMarkCalculation.getValue();
+			
+			//initializing selectedAssessments
+			for(i = 0; i < checkBoxes.size(); i++) {
+				if(checkBoxes.get(i).isSelected()) {
+					selectedAssessments.add(checkBoxes.get(i).getText());
+				}
+			}
+			
+			//calculating average
+			for(i = 0; i < students.size(); i++) {
+				Float average = 0.0f;
+				for(j = 0; j < selectedAssessments.size(); j++) {
+					average += Float.parseFloat(students.get(i).getMark(selectedAssessments.get(j)));
+				}
+				average /= selectedAssessments.size();
+				calculatedAvgMarks[i] = average;
+				
+				//adding to previous mark in column
+				float previousMark;
+				if(students.get(i).getMark(colName).equals("")) {
+					previousMark = 0.0f;
+				} else {						
+					previousMark = Float.parseFloat(students.get(i).getMark(colName));
+				}
+				
+				if(addRadioButton.isSelected()) {
+					students.get(i).setMark(colName, (previousMark + average)+"");					
+				} else if(replaceRadioButton.isSelected()) {
+					students.get(i).setMark(colName, average+"");
+				}
+			}
+			
+			tableView.setItems(students);
+			tableView.refresh();
+			
+		} 
+		else if(bonusRadioButton.isSelected() && !bonusTextField.getText().equals("")) {
 			String colName = choiceBoxForMarkCalculation.getValue();
 			float markToAdd = Float.parseFloat(bonusTextField.getText());
 			ObservableList<Student> students = tableView.getItems();
 			int i;
 			for(i = 0; i < students.size(); i++) {
 				try {
-					float mark;
+					float previousMark;
 					if(students.get(i).getMark(colName).equals("")) {
-						mark = 0.0f;
+						previousMark = 0.0f;
 					} else {						
-						mark = Float.parseFloat(students.get(i).getMark(colName));
+						previousMark = Float.parseFloat(students.get(i).getMark(colName));
 					}
-					mark += markToAdd;
-					students.get(i).setMark(colName, mark+"");
+					
+					if(addRadioButton.isSelected()) {
+						students.get(i).setMark(colName, (previousMark + markToAdd)+"");					
+					} else if(replaceRadioButton.isSelected()) {
+						students.get(i).setMark(colName, markToAdd+"");
+					}
 				} catch (Exception e) {
 					// do nothing
 				}
