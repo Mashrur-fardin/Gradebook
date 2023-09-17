@@ -1,7 +1,9 @@
 package application;
 
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -351,7 +353,7 @@ public class Controller implements Initializable{
 			int i, j;
 			ObservableList<CheckBox> checkBoxes = listViewForMarkCalculation.getItems();
 			ArrayList<String> selectedAssessments = new ArrayList<>();
-			double[] calculatedAvgMarks = new double[tableView.getItems().size()];
+//			double[] calculatedAvgMarks = new double[tableView.getItems().size()];
 			ObservableList<Student> students = tableView.getItems();
 			String colName = choiceBoxForMarkCalculation.getValue();
 			
@@ -369,7 +371,7 @@ public class Controller implements Initializable{
 					average += Float.parseFloat(students.get(i).getMark(selectedAssessments.get(j)));
 				}
 				average /= selectedAssessments.size();
-				calculatedAvgMarks[i] = average;
+//				calculatedAvgMarks[i] = average;
 				
 				//adding to previous mark in column
 				float previousMark;
@@ -388,8 +390,103 @@ public class Controller implements Initializable{
 			
 			tableView.setItems(students);
 			tableView.refresh();
+			averageRadioButton.setSelected(false);
 			
 		} 
+		else if(bestRadioButton.isSelected()) {
+			int i, j;
+			ObservableList<CheckBox> checkBoxes = listViewForMarkCalculation.getItems();
+			ArrayList<String> selectedAssessments = new ArrayList<>();
+			float[] marksOfSelectedAssessments = new float[checkBoxes.size()]; //of 1 student
+//			double[] calculatedBestMarks = new double[tableView.getItems().size()];//of all students
+			ObservableList<Student> students = tableView.getItems();
+			String colName = choiceBoxForMarkCalculation.getValue();
+			
+			//initializing selectedAssessments
+			for(i = 0; i < checkBoxes.size(); i++) {
+				if(checkBoxes.get(i).isSelected()) {
+					selectedAssessments.add(checkBoxes.get(i).getText());
+				}
+			}
+			
+			//calculating best
+			for(i = 0; i < students.size(); i++) {
+				for(j = 0; j < selectedAssessments.size(); j++) {
+					marksOfSelectedAssessments[j] = Float.parseFloat(students.get(i).getMark(selectedAssessments.get(j)));
+				}
+				Arrays.sort(marksOfSelectedAssessments);
+				float best = marksOfSelectedAssessments[j];
+//				calculatedBestMarks[i] = best;
+				
+				//adding to previous mark in column
+				float previousMark;
+				if(students.get(i).getMark(colName).equals("")) {
+					previousMark = 0.0f;
+				} else {						
+					previousMark = Float.parseFloat(students.get(i).getMark(colName));
+				}
+				
+				if(addRadioButton.isSelected()) {
+					students.get(i).setMark(colName, (previousMark + best)+"");					
+				} else if(replaceRadioButton.isSelected()) {
+					students.get(i).setMark(colName, best+"");
+				}
+			}
+			
+			tableView.setItems(students);
+			tableView.refresh();
+			bestRadioButton.setSelected(false);
+		}
+		else if (best_n_RadioButton.isSelected()) {
+			int i, j;
+			ObservableList<CheckBox> checkBoxes = listViewForMarkCalculation.getItems();
+			ArrayList<String> selectedAssessments = new ArrayList<>();
+			float[] marksOfSelectedAssessments = new float[checkBoxes.size()]; //of 1 student
+//			double[] calculatedBestMarks = new double[tableView.getItems().size()];//of all students
+			ObservableList<Student> students = tableView.getItems();
+			String colName = choiceBoxForMarkCalculation.getValue();
+			
+			//initializing selectedAssessments
+			for(i = 0; i < checkBoxes.size(); i++) {
+				if(checkBoxes.get(i).isSelected()) {
+					selectedAssessments.add(checkBoxes.get(i).getText());
+				}
+			}
+			
+			//calculating best n average
+			for(i = 0; i < students.size(); i++) {
+				for(j = 0; j < selectedAssessments.size(); j++) {
+					marksOfSelectedAssessments[j] = Float.parseFloat(students.get(i).getMark(selectedAssessments.get(j)));
+				}
+				Arrays.sort(marksOfSelectedAssessments);
+				
+				int bestN = Integer.parseInt(best_n_textField.getText());
+				
+				float best_n_Average = 0.0f;
+				for(j = marksOfSelectedAssessments.length - 1; j > marksOfSelectedAssessments.length - bestN - 1; j--) {
+					best_n_Average += marksOfSelectedAssessments[j];
+				}
+				best_n_Average /= bestN;
+				
+//				//adding to previous mark in column
+				float previousMark;
+				if(students.get(i).getMark(colName).equals("")) {
+					previousMark = 0.0f;
+				} else {						
+					previousMark = Float.parseFloat(students.get(i).getMark(colName));
+				}
+				
+				if(addRadioButton.isSelected()) {
+					students.get(i).setMark(colName, (previousMark + best_n_Average)+"");					
+				} else if(replaceRadioButton.isSelected()) {
+					students.get(i).setMark(colName, best_n_Average+"");
+				}
+			}
+			
+			tableView.setItems(students);
+			tableView.refresh();
+			best_n_RadioButton.setSelected(false);
+		}
 		else if(bonusRadioButton.isSelected() && !bonusTextField.getText().equals("")) {
 			String colName = choiceBoxForMarkCalculation.getValue();
 			float markToAdd = Float.parseFloat(bonusTextField.getText());
