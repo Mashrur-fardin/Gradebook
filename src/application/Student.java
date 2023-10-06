@@ -6,6 +6,8 @@ public class Student {
 	private int sn = -1;
 	private String id;
 	private String name;
+	private String grade;
+
 	private static ArrayList<String> assessmentNames = new ArrayList<>();
 	private ArrayList<String> assessmentMarks = new ArrayList<>(); 
 	
@@ -38,10 +40,10 @@ public class Student {
 	}
 	
 	public ArrayList<String> getAssessmentNames() {
-		return this.assessmentNames;
+		return Student.assessmentNames;
 	}
 	public void setAssessmentNames(ArrayList<String> assessmentNames) {
-		this.assessmentNames = assessmentNames;
+		Student.assessmentNames = assessmentNames;
 	}
 	public ArrayList<String> getAssessmentMarks() {
 		return this.assessmentMarks;
@@ -52,8 +54,8 @@ public class Student {
 	
 	public String getMark(String assessmentName) {
 		int i;
-		for(i = 0; i < this.assessmentNames.size(); i++) {
-			if(this.assessmentNames.get(i).equals(assessmentName)) {
+		for(i = 0; i < Student.assessmentNames.size(); i++) {
+			if(Student.assessmentNames.get(i).equals(assessmentName)) {
 				return assessmentMarks.get(i);
 			}
 		}
@@ -67,6 +69,13 @@ public class Student {
 				assessmentMarks.set(i, mark);
 			}
 		}
+	}
+	
+	public String getGrade() {
+		return grade;
+	}
+	public void setGrade(String grade) {
+		this.grade = grade;
 	}
 	
 }

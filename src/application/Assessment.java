@@ -1,9 +1,14 @@
 package application;
 
+import javafx.scene.control.CheckBox;
+
 public class Assessment {
 	private String assessmentName;
 	private double assessmentFullMark;
 	private double assessmentWeight;
+	private boolean countableForGrade;
+	
+	private CheckBox countableForGradeCheckBox = new CheckBox();
 	
 	public String getAssessmentName() {
 		return assessmentName;
@@ -23,5 +28,21 @@ public class Assessment {
 	public void setAssessmentWeight(double assessmentWeight) {
 		this.assessmentWeight = assessmentWeight;
 	}
+	public boolean isCountableForGrade() {
+		if(countableForGradeCheckBox.isSelected()) countableForGrade = true;
+		else countableForGrade = false;
+		return countableForGrade;
+	}
+	public void setCountForGrade(boolean countForGrade) {
+		this.countableForGrade = countForGrade;
+		this.countableForGradeCheckBox.setSelected(countForGrade);
+	}
+	public CheckBox getCountableForGradeCheckBox() {
+		return countableForGradeCheckBox;
+	}
+	public void setCountableForGradeCheckBox(CheckBox countableForGradeCheckBox) {
+		this.countableForGradeCheckBox = countableForGradeCheckBox;
+	}
+	
 	
 }

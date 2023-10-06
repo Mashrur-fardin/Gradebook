@@ -1,6 +1,5 @@
 package application;
 
-import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,17 +25,18 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.shape.TriangleMesh;
 import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.FloatStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import javafx.util.converter.LongStringConverter;
 
 public class Controller implements Initializable{
-	//This has to be initialized from file first;
-	private ArrayList<String> assessmentNames = new ArrayList<>();
-	private ArrayList<Assessment> assessmentsArrayList = new ArrayList<>(); //this is for the mini right table
+	//These 2 has to be initialized from file first;
+	private ArrayList<String> assessmentNames = new ArrayList<>(); //For student class
+	private ArrayList<Assessment> assessmentsArrayList = new ArrayList<>(); //this is for the mini right table (Assessment class)
 	
-	private ArrayList<CheckBox> checkBoxes = new ArrayList<>(); //this is for mark calculation on the left side
+	//private ArrayList<CheckBox> checkBoxes = new ArrayList<>(); //this is for mark calculation on the left side
 	
 	private boolean tableIsLocked = false;
 	
@@ -58,6 +58,9 @@ public class Controller implements Initializable{
 
     @FXML
     private TableColumn<Assessment, Double> assessmentWeightCol;
+    
+    @FXML
+    private TableColumn<Assessment, CheckBox> assessmentCountColumn;
 	
 	@FXML
     private TableColumn<Student, Integer> snCol;
@@ -67,6 +70,10 @@ public class Controller implements Initializable{
 	
 	@FXML
     private TableColumn<Student, String> nameCol;
+	
+	@FXML
+    private TableColumn<Student, String> gradeCol;
+
 	
 	@FXML
     private TextArea enterId;
@@ -114,8 +121,6 @@ public class Controller implements Initializable{
     private RadioButton addRadioButton;
     
     
-    
-    
 	public void addIdName(ActionEvent event) {
 		if(tableIsLocked) return;
 		
@@ -140,7 +145,7 @@ public class Controller implements Initializable{
 			
 			student[i].setAssessmentNames(assessmentNames);
 			
-			//setting default marks(0.0f) for each assessment in student class
+			//setting default marks("") for each assessment in student class
 			ArrayList<String> assessmentMarks = student[i].getAssessmentMarks();
 			for(j = 0; j < this.assessmentNames.size(); j++) {
 				assessmentMarks.add("");
@@ -300,7 +305,7 @@ public class Controller implements Initializable{
 				if(alert.showAndWait().get() == ButtonType.OK) {						
 					tableView.getColumns().remove(i);
 					
-//						removing from the mini table
+//						removing from the mini right table
 					for(i = 0; i < assessmentsToRemove.size(); i++) {
 						if(assessmentsToRemove.get(i).getAssessmentName().equals(columnToRemove)) {
 							assessmentsToRemove.remove(i);
@@ -315,6 +320,7 @@ public class Controller implements Initializable{
 							assessmentsArrayList.remove(i);
 							assessmentChoiceBox.getItems().remove(i);
 							choiceBoxForMarkCalculation.getItems().remove(i);
+							listViewForMarkCalculation.getItems().remove(i);
 							break;
 						}
 					}
@@ -517,6 +523,62 @@ public class Controller implements Initializable{
 		}
 	}
 	
+	public void calculateGrade() {
+		if(tableIsLocked) return;
+		
+		gradeCol.setVisible(true);
+		
+		ObservableList<Assessment> assessmentsForGrade = assessmentMarksTable.getItems();
+		int i, j;
+		for(i = 0; i < assessmentsForGrade.size(); i++) {
+			if(!assessmentsForGrade.get(i).isCountableForGrade()) {
+				assessmentsForGrade.remove(i);
+			}
+		}
+		
+		ObservableList<Student> students = tableView.getItems();
+
+		double finalScore;
+		for(i = 0; i < students.size(); i++) {
+			finalScore = 0.0;
+			for(j = 0; j < assessmentsForGrade.size(); j++) {
+				String assessmentName = assessmentsForGrade.get(j).getAssessmentName();
+				double mark = Double.parseDouble(students.get(i).getMark(assessmentName));
+				finalScore += mark * assessmentsForGrade.get(j).getAssessmentWeight() / assessmentsForGrade.get(j).getAssessmentFullMark();
+			}
+			if(finalScore >= 93) {
+				students.get(i).setGrade("A");
+			} else if (finalScore >= 90 && finalScore <= 92){
+				students.get(i).setGrade("A-");
+			} else if (finalScore >= 87 && finalScore <= 89){
+				students.get(i).setGrade("B+");
+			} else if (finalScore >= 83 && finalScore <= 86){
+				students.get(i).setGrade("B");
+			} else if (finalScore >= 80 && finalScore <= 82){
+				students.get(i).setGrade("B-");
+			} else if (finalScore >= 77 && finalScore <= 79){
+				students.get(i).setGrade("C+");
+			} else if (finalScore >= 73 && finalScore <= 76){
+				students.get(i).setGrade("C");
+			} else if (finalScore >= 70 && finalScore <= 72){
+				students.get(i).setGrade("C-");
+			} else if (finalScore >= 67 && finalScore <= 79){
+				students.get(i).setGrade("D+");
+			} else if (finalScore >= 60 && finalScore <= 66){
+				students.get(i).setGrade("D");
+			} else if (finalScore < 60){
+				students.get(i).setGrade("F");
+			}
+		}
+		
+//		for(i = 0; i < students.size(); i++) {
+//			students.get(i).setGrade("A");
+//		}
+		tableView.setItems(students);
+		tableView.refresh();
+		
+	}
+	
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -557,6 +619,20 @@ public class Controller implements Initializable{
 				if(!tableIsLocked) {
 					Student student = arg0.getRowValue();
 					student.setName(arg0.getNewValue());
+				}
+				tableView.refresh();
+			}
+		});;
+		
+		gradeCol.setCellValueFactory(new PropertyValueFactory<Student, String>("grade"));
+		gradeCol.setCellFactory(TextFieldTableCell.forTableColumn());
+		gradeCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Student,String>>() {
+			
+			@Override
+			public void handle(CellEditEvent<Student, String> arg0) {
+				if(!tableIsLocked) {
+					Student student = arg0.getRowValue();
+					student.setGrade(arg0.getNewValue());
 				}
 				tableView.refresh();
 			}
@@ -637,5 +713,7 @@ public class Controller implements Initializable{
 				assessmentMarksTable.refresh();
 			}
 		});;
+		
+		assessmentCountColumn.setCellValueFactory(new PropertyValueFactory<Assessment, CheckBox>("countableForGradeCheckBox"));
 	}
 }
