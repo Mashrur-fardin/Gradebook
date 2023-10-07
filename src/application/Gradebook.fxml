@@ -103,9 +103,9 @@
       <items>
             <VBox prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <SplitPane dividerPositions="0.5336976320582878" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" VBox.vgrow="ALWAYS">
+                  <SplitPane dividerPositions="0.5336976320582878" minWidth="0.0" orientation="VERTICAL" prefHeight="200.0" VBox.vgrow="ALWAYS">
                      <items>
-                        <VBox alignment="TOP_CENTER" minHeight="20.0" prefWidth="206.0">
+                        <VBox alignment="TOP_CENTER" minHeight="20.0">
                            <children>
                               <Label text="Calculate Marks:">
                                  <font>
@@ -151,11 +151,11 @@
                                                 <Font name="System Bold" size="12.0" />
                                              </font>
                                           </Label>
-                                          <ScrollPane fitToHeight="true" fitToWidth="true" focusTraversable="false" prefHeight="150.0" HBox.hgrow="ALWAYS">
+                                          <ScrollPane fitToHeight="true" fitToWidth="true" focusTraversable="false" prefHeight="300.0" HBox.hgrow="ALWAYS">
                                              <content>
-                                                <VBox prefHeight="200.0" prefWidth="100.0">
+                                                <VBox>
                                                    <children>
-                                                      <ListView fx:id="listViewForMarkCalculation" />
+                                                      <ListView fx:id="listViewForMarkCalculation" VBox.vgrow="ALWAYS" />
                                                    </children>
                                                 </VBox>
                                              </content>
@@ -210,25 +210,54 @@
                                     <ChoiceBox fx:id="choiceBoxForMarkCalculation" prefWidth="150.0" />
                                  </children>
                                  <VBox.margin>
-                                    <Insets />
+                                    <Insets top="5.0" />
                                  </VBox.margin>
                               </HBox>
                               <Button fx:id="calculateMark" mnemonicParsing="false" onAction="#calculateMark" prefWidth="75.0" text="OK" textFill="#388c23">
                                  <font>
-                                    <Font name="System Bold" size="14.0" />
+                                    <Font name="System Bold" size="12.0" />
                                  </font>
                                  <VBox.margin>
-                                    <Insets top="15.0" />
+                                    <Insets bottom="10.0" top="15.0" />
                                  </VBox.margin>
                               </Button>
                            </children>
                         </VBox>
-                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
                            <children>
+                              <HBox alignment="CENTER_LEFT">
+                                 <children>
+                                    <Button mnemonicParsing="false" text="Add" textFill="#388c23">
+                                       <HBox.margin>
+                                          <Insets right="5.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button mnemonicParsing="false" text="Remove" textFill="#8a2b22" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <TableView fx:id="gradingTable" editable="true" VBox.vgrow="ALWAYS">
+                                <columns>
+                                  <TableColumn prefWidth="75.0" sortable="false" text="From" />
+                                  <TableColumn prefWidth="75.0" sortable="false" text="To" />
+                                    <TableColumn prefWidth="75.0" sortable="false" text="Grade" />
+                                </columns>
+                                 <columnResizePolicy>
+                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                 </columnResizePolicy>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </TableView>
                               <Button fx:id="calculateGradeButton" mnemonicParsing="false" onAction="#calculateGrade" text="Calculate Grade" textFill="#388c23">
                                  <font>
-                                    <Font name="System Bold" size="18.0" />
+                                    <Font name="System Bold" size="14.0" />
                                  </font>
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" top="5.0" />
+                                 </VBox.margin>
                               </Button>
                            </children></VBox>
                      </items>
@@ -280,7 +309,7 @@
         </ScrollPane>
             <VBox alignment="TOP_CENTER">
                <children>
-                  <SplitPane dividerPositions="0.35, 0.75" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+                  <SplitPane dividerPositions="0.35, 0.75" minWidth="0.0" orientation="VERTICAL" VBox.vgrow="ALWAYS">
                     <items>
                         <VBox alignment="TOP_CENTER" minHeight="20.0">
                            <children>
@@ -331,7 +360,7 @@
                                     <Font name="System Bold" size="12.0" />
                                  </font>
                                  <VBox.margin>
-                                    <Insets />
+                                    <Insets top="5.0" />
                                  </VBox.margin>
                               </Label>
                               <HBox>
