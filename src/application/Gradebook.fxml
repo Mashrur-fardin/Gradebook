@@ -227,12 +227,21 @@
                            <children>
                               <HBox alignment="CENTER_LEFT">
                                  <children>
-                                    <Button mnemonicParsing="false" text="Add" textFill="#388c23">
+                                    <Button fx:id="addGradeButton" mnemonicParsing="false" onAction="#addGrade" text="Add" textFill="#388c23">
+                                       <HBox.margin>
+                                          <Insets left="5.0" right="5.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="removeGradeButton" mnemonicParsing="false" onAction="#removeGrade" text="Remove" textFill="#8a2b22" />
+                                    <Pane HBox.hgrow="ALWAYS" />
+                                    <Button mnemonicParsing="false" onAction="#getDefaultGradingTable" text="Default">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
                                        <HBox.margin>
                                           <Insets right="5.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button mnemonicParsing="false" text="Remove" textFill="#8a2b22" />
                                  </children>
                                  <VBox.margin>
                                     <Insets top="10.0" />
@@ -240,9 +249,9 @@
                               </HBox>
                               <TableView fx:id="gradingTable" editable="true" VBox.vgrow="ALWAYS">
                                 <columns>
-                                  <TableColumn prefWidth="75.0" sortable="false" text="From" />
-                                  <TableColumn prefWidth="75.0" sortable="false" text="To" />
-                                    <TableColumn prefWidth="75.0" sortable="false" text="Grade" />
+                                  <TableColumn fx:id="gradeFromCol" prefWidth="75.0" sortable="false" text="From" />
+                                  <TableColumn fx:id="gradeToCol" prefWidth="75.0" sortable="false" text="To" />
+                                    <TableColumn fx:id="gradeNameCol" prefWidth="75.0" sortable="false" text="Grade" />
                                 </columns>
                                  <columnResizePolicy>
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -256,7 +265,7 @@
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                                  <VBox.margin>
-                                    <Insets bottom="5.0" top="5.0" />
+                                    <Insets bottom="10.0" top="10.0" />
                                  </VBox.margin>
                               </Button>
                            </children></VBox>

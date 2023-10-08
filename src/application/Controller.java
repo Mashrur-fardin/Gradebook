@@ -74,7 +74,6 @@ public class Controller implements Initializable{
 	@FXML
     private TableColumn<Student, String> gradeCol;
 
-	
 	@FXML
     private TextArea enterId;
 
@@ -120,6 +119,19 @@ public class Controller implements Initializable{
     @FXML
     private RadioButton addRadioButton;
     
+    @FXML
+    private TableView<Grade> gradingTable;
+    
+    @FXML
+    private TableColumn<Grade, String> gradeFromCol;
+    
+    @FXML
+    private TableColumn<Grade, String> gradeToCol;
+
+    @FXML
+    private TableColumn<Grade, String> gradeNameCol;
+
+
     
 	public void addIdName(ActionEvent event) {
 		if(tableIsLocked) return;
@@ -159,7 +171,6 @@ public class Controller implements Initializable{
 		
 		enterId.clear();
 		enterName.clear();
-		
 	}
 	
 	
@@ -447,7 +458,7 @@ public class Controller implements Initializable{
 			int i, j;
 			ObservableList<CheckBox> checkBoxes = listViewForMarkCalculation.getItems();
 			ArrayList<String> selectedAssessments = new ArrayList<>();
-			float[] marksOfSelectedAssessments = new float[checkBoxes.size()]; //of 1 student
+			float[] marksOfSelectedAssessments; //of 1 student
 //			double[] calculatedBestMarks = new double[tableView.getItems().size()];//of all students
 			ObservableList<Student> students = tableView.getItems();
 			String colName = choiceBoxForMarkCalculation.getValue();
@@ -461,6 +472,7 @@ public class Controller implements Initializable{
 			
 			//calculating best n average
 			for(i = 0; i < students.size(); i++) {
+				marksOfSelectedAssessments = new float[checkBoxes.size()];
 				for(j = 0; j < selectedAssessments.size(); j++) {
 					marksOfSelectedAssessments[j] = Float.parseFloat(students.get(i).getMark(selectedAssessments.get(j)));
 				}
@@ -474,7 +486,7 @@ public class Controller implements Initializable{
 				}
 				best_n_Average /= bestN;
 				
-//				//adding to previous mark in column
+//				//adding or replacing to previous mark in column
 				float previousMark;
 				if(students.get(i).getMark(colName).equals("")) {
 					previousMark = 0.0f;
@@ -546,29 +558,51 @@ public class Controller implements Initializable{
 				double mark = Double.parseDouble(students.get(i).getMark(assessmentName));
 				finalScore += mark * assessmentsForGrade.get(j).getAssessmentWeight() / assessmentsForGrade.get(j).getAssessmentFullMark();
 			}
-			if(finalScore >= 93) {
-				students.get(i).setGrade("A");
-			} else if (finalScore >= 90 && finalScore <= 92){
-				students.get(i).setGrade("A-");
-			} else if (finalScore >= 87 && finalScore <= 89){
-				students.get(i).setGrade("B+");
-			} else if (finalScore >= 83 && finalScore <= 86){
-				students.get(i).setGrade("B");
-			} else if (finalScore >= 80 && finalScore <= 82){
-				students.get(i).setGrade("B-");
-			} else if (finalScore >= 77 && finalScore <= 79){
-				students.get(i).setGrade("C+");
-			} else if (finalScore >= 73 && finalScore <= 76){
-				students.get(i).setGrade("C");
-			} else if (finalScore >= 70 && finalScore <= 72){
-				students.get(i).setGrade("C-");
-			} else if (finalScore >= 67 && finalScore <= 79){
-				students.get(i).setGrade("D+");
-			} else if (finalScore >= 60 && finalScore <= 66){
-				students.get(i).setGrade("D");
-			} else if (finalScore < 60){
-				students.get(i).setGrade("F");
+			
+			//taking the grade ranges from grading table
+			ObservableList<Grade> grades = gradingTable.getItems();
+			for (Grade grade : grades) {
+				double min, max;
+				if(!grade.getMinNumber().equals("*")) {					
+					min = Double.parseDouble(grade.getMinNumber());
+				} else {
+					min = Double.MIN_VALUE;
+				}
+				
+				if(!grade.getMaxNumber().equals("*")) {					
+					max = Double.parseDouble(grade.getMaxNumber());
+				} else {
+					max = Double.MAX_VALUE;
+				}
+				
+				if(finalScore >= min && finalScore <= max) {
+					students.get(i).setGrade(grade.getGradeName());
+					break;
+				}
 			}
+//			if(finalScore >= 93) {
+//				students.get(i).setGrade("A");
+//			} else if (finalScore >= 90 && finalScore <= 92){
+//				students.get(i).setGrade("A-");
+//			} else if (finalScore >= 87 && finalScore <= 89){
+//				students.get(i).setGrade("B+");
+//			} else if (finalScore >= 83 && finalScore <= 86){
+//				students.get(i).setGrade("B");
+//			} else if (finalScore >= 80 && finalScore <= 82){
+//				students.get(i).setGrade("B-");
+//			} else if (finalScore >= 77 && finalScore <= 79){
+//				students.get(i).setGrade("C+");
+//			} else if (finalScore >= 73 && finalScore <= 76){
+//				students.get(i).setGrade("C");
+//			} else if (finalScore >= 70 && finalScore <= 72){
+//				students.get(i).setGrade("C-");
+//			} else if (finalScore >= 67 && finalScore <= 79){
+//				students.get(i).setGrade("D+");
+//			} else if (finalScore >= 60 && finalScore <= 66){
+//				students.get(i).setGrade("D");
+//			} else if (finalScore < 60){
+//				students.get(i).setGrade("F");
+//			}
 		}
 		
 //		for(i = 0; i < students.size(); i++) {
@@ -577,6 +611,42 @@ public class Controller implements Initializable{
 		tableView.setItems(students);
 		tableView.refresh();
 		
+	}
+	
+	public void addGrade() {
+		Grade grade = new Grade();
+		ObservableList<Grade> grades= gradingTable.getItems();
+		grades.add(grade);
+		gradingTable.setItems(grades);
+		gradingTable.refresh();
+	}
+	
+	public void removeGrade() {
+		int row = gradingTable.getSelectionModel().getSelectedIndex();
+		try {
+			gradingTable.getItems().remove(row);
+		} catch (Exception e) {
+			// do nothing
+		}
+	}
+	
+	public void getDefaultGradingTable() {
+		ObservableList<Grade> grades = gradingTable.getItems();
+		grades.clear();
+		gradingTable.setItems(grades);
+		grades.add(new Grade("93", "*", "A"));
+		grades.add(new Grade("90", "92", "A-"));
+		grades.add(new Grade("87", "89", "B+"));
+		grades.add(new Grade("83", "86", "B"));
+		grades.add(new Grade("80", "82", "B-"));
+		grades.add(new Grade("77", "79", "C+"));
+		grades.add(new Grade("73", "76", "C"));
+		grades.add(new Grade("70", "72", "C-"));
+		grades.add(new Grade("97", "69", "D+"));
+		grades.add(new Grade("60", "66", "D"));
+		grades.add(new Grade("*", "59", "F"));
+		gradingTable.setItems(grades);
+		gradingTable.refresh();
 	}
 	
 
@@ -715,5 +785,48 @@ public class Controller implements Initializable{
 		});;
 		
 		assessmentCountColumn.setCellValueFactory(new PropertyValueFactory<Assessment, CheckBox>("countableForGradeCheckBox"));
+		
+		
+		gradeFromCol.setCellValueFactory(new PropertyValueFactory<Grade, String>("minNumber"));
+		gradeFromCol.setCellFactory(TextFieldTableCell.forTableColumn());
+		gradeFromCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Grade, String>>() {
+			
+			@Override
+			public void handle(CellEditEvent<Grade, String> arg0) {
+				if(!tableIsLocked) {
+					Grade grade = arg0.getRowValue();
+					grade.setMinNumber(arg0.getNewValue());
+				}
+				tableView.refresh();
+			}
+		});;
+		
+		gradeToCol.setCellValueFactory(new PropertyValueFactory<Grade, String>("maxNumber"));
+		gradeToCol.setCellFactory(TextFieldTableCell.forTableColumn());
+		gradeToCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Grade, String>>() {
+			
+			@Override
+			public void handle(CellEditEvent<Grade, String> arg0) {
+				if(!tableIsLocked) {
+					Grade grade = arg0.getRowValue();
+					grade.setMaxNumber(arg0.getNewValue());
+				}
+				tableView.refresh();
+			}
+		});;
+		
+		gradeNameCol.setCellValueFactory(new PropertyValueFactory<Grade, String>("gradeName"));
+		gradeNameCol.setCellFactory(TextFieldTableCell.forTableColumn());
+	    gradeNameCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Grade, String>>() {
+			
+			@Override
+			public void handle(CellEditEvent<Grade, String> arg0) {
+				if(!tableIsLocked) {
+					Grade grade = arg0.getRowValue();
+					grade.setGradeName(arg0.getNewValue());
+				}
+				tableView.refresh();
+			}
+		});;
 	}
 }

@@ -2,16 +2,16 @@ package application;
 
 public class Grade {
 	private String gradeName;
-	private double minNumber;
-	private double maxNumber;
+	private String minNumber;
+	private String maxNumber;
 	
 	public Grade() {
-		this.gradeName = null;
-		this.minNumber = 0;
-		this.maxNumber = 100;
+		this.gradeName = "A++";
+		this.minNumber = "0";
+		this.maxNumber = "100";
 	}
 	
-	public Grade(String gradeName, double minNumber, double maxNumber) {
+	public Grade(String minNumber, String maxNumber, String gradeName) {
 		this.gradeName = gradeName;
 		this.minNumber = minNumber;
 		this.maxNumber = maxNumber;
@@ -25,22 +25,20 @@ public class Grade {
 		this.gradeName = gradeName;
 	}
 
-	public double getMinNumber() {
+	public String getMinNumber() {
 		return minNumber;
 	}
 
-	public void setMinNumber(double minNumber) {
+	public void setMinNumber(String minNumber) {
 		this.minNumber = minNumber;
 	}
 
-	public double getMaxNumber() {
+	public String getMaxNumber() {
 		return maxNumber;
 	}
 
-	public void setMaxNumber(double maxNumber) {
+	public void setMaxNumber(String maxNumber) {
 		this.maxNumber = maxNumber;
 	}
-	
-	
 	
 }
